@@ -1,0 +1,65 @@
+"""Call Claude to turn a laptop name + hints into a SpecSideView product draft."""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+from typing import Any
+
+from anthropic import Anthropic
+
+from product_schema import LAPTOP_JSON_SCHEMA_HINT, slugify
+
+
+def _extract_json(text: str) -> dict[str, Any]:
+    text = text.strip()
+    fence = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
+    if fence:
+        text = fence.group(1).strip()
+    return json.loads(text)
+
+
+def polish_laptop(
+    query: str,
+    *,
+    amazon_hint: str | None = None,
+    extra_context: str | None = None,
+) -> dict[str, Any]:
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise RuntimeError("ANTHROPIC_API_KEY is not set")
+
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+    client = Anthropic(api_key=api_key)
+
+    user_parts = [
+        f"Research and normalize this laptop for SpecSideView (category: laptops):\n{query}",
+    ]
+    if amazon_hint:
+        user_parts.append(f"Amazon listing hint:\n{amazon_hint}")
+    if extra_context:
+        user_parts.append(f"Additional context:\n{extra_context}")
+    user_parts.append(LAPTOP_JSON_SCHEMA_HINT)
+
+    message = client.messages.create(
+        model=model,
+        max_tokens=4096,
+        temperature=0.2,
+        system=(
+            "You prepare electronics spec data for a comparison website. "
+            "Be conservative: mark estimates in sourcesNote, use null for unknown Amazon URLs, "
+            "and ensure display geometry is internally consistent. Output JSON only."
+        ),
+        messages=[{"role": "user", "content": "\n\n".join(user_parts)}],
+    )
+
+    raw = ""
+    for block in message.content:
+        if block.type == "text":
+            raw += block.text
+
+    data = _extract_json(raw)
+    if not data.get("slug"):
+        data["slug"] = slugify(data.get("displayName") or query)
+    return data

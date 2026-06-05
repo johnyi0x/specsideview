@@ -19,25 +19,35 @@ export type ComparePayload = {
 };
 
 function ProductOverviewCard({ product, side }: { product: Product; side: "left" | "right" }) {
+  const seriesColor = side === "left" ? "var(--chart-series-a)" : "var(--chart-series-b)";
   return (
-    <div className="card-surface flex h-full flex-col rounded-2xl p-6 md:p-8">
-      <div className="flex gap-5">
-        <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-xl bg-[color-mix(in_oklch,var(--color-card-border)_55%,transparent)] md:h-32 md:w-44">
+    <div className="card-surface flex h-full min-w-0 flex-col rounded-xl p-3 sm:rounded-2xl sm:p-6 md:p-8">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:gap-5">
+        <div className="relative mx-auto aspect-[4/3] w-full max-w-[8rem] shrink-0 overflow-hidden rounded-lg bg-[color-mix(in_oklch,var(--color-card-border)_55%,transparent)] sm:mx-0 sm:h-28 sm:w-32 sm:max-w-none sm:rounded-xl md:h-32 md:w-36">
           {product.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={product.imageUrl} alt="" className="h-full w-full object-cover" />
           ) : null}
         </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--color-accent)]">
-            {side === "left" ? "Left column" : "Right column"}
+        <div className="min-w-0 text-center sm:text-left">
+          <p
+            className="hidden text-[10px] font-medium uppercase tracking-[0.2em] sm:block sm:text-xs sm:tracking-[0.25em]"
+            style={{ color: seriesColor }}
+          >
+            {side === "left" ? "Left" : "Right"}
           </p>
-          <h2 className="font-display mt-2 text-xl font-semibold leading-tight md:text-2xl">{product.displayName}</h2>
-          {product.subtitle && <p className="mt-2 text-sm text-[var(--color-muted)]">{product.subtitle}</p>}
+          <h2 className="font-display text-sm font-semibold leading-snug sm:mt-2 sm:text-xl md:text-2xl">
+            {product.displayName}
+          </h2>
+          {product.subtitle && (
+            <p className="mt-1 line-clamp-2 text-[10px] leading-snug text-[var(--color-muted)] sm:mt-2 sm:text-sm">
+              {product.subtitle}
+            </p>
+          )}
         </div>
       </div>
-      <div className="mt-6">
-        <AmazonBlock product={product} />
+      <div className="mt-3 sm:mt-6">
+        <AmazonBlock product={product} compact />
       </div>
     </div>
   );
@@ -45,17 +55,18 @@ function ProductOverviewCard({ product, side }: { product: Product; side: "left"
 
 function CalloutsCard({ title, list }: { title: string; list: string[] }) {
   return (
-    <div className="card-surface h-full rounded-2xl p-6">
-      <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-        {title} · callouts
+    <div className="card-surface h-full min-w-0 rounded-xl p-3 sm:rounded-2xl sm:p-6">
+      <h3 className="font-display text-[10px] font-semibold uppercase leading-snug tracking-wide text-[var(--color-muted)] sm:text-sm sm:tracking-wider">
+        <span className="line-clamp-2">{title}</span>
+        <span className="text-[var(--color-muted)]"> · callouts</span>
       </h3>
       {list.length === 0 ? (
-        <p className="mt-3 text-sm text-[var(--color-muted)]">No curated highlights for this product yet.</p>
+        <p className="mt-2 text-[10px] text-[var(--color-muted)] sm:mt-3 sm:text-sm">No highlights yet.</p>
       ) : (
-        <ul className="mt-4 space-y-2 text-sm text-[var(--color-foreground)]">
+        <ul className="mt-2 space-y-1.5 text-[10px] leading-snug text-[var(--color-foreground)] sm:mt-4 sm:space-y-2 sm:text-sm">
           {list.map((h, j) => (
-            <li key={j} className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+            <li key={j} className="flex gap-1.5 sm:gap-2">
+              <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[var(--color-accent)] sm:mt-1.5 sm:h-1.5 sm:w-1.5" />
               <span>{h}</span>
             </li>
           ))}
@@ -65,7 +76,7 @@ function CalloutsCard({ title, list }: { title: string; list: string[] }) {
   );
 }
 
-function AmazonBlock({ product }: { product: Product }) {
+function AmazonBlock({ product, compact = false }: { product: Product; compact?: boolean }) {
   const url = product.amazonUrl?.trim();
   const price = product.amazonPriceLabel?.trim();
   const hasLink = Boolean(url);
@@ -85,15 +96,19 @@ function AmazonBlock({ product }: { product: Product }) {
     <div className="space-y-3">
       {hasPrice && (
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--color-muted)]">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-[var(--color-muted)] sm:text-[10px] sm:tracking-[0.2em]">
             Price on Amazon
           </p>
-          <p className="font-display mt-1 text-2xl font-semibold tracking-tight text-[var(--color-foreground)]">
+          <p
+            className={`font-display mt-0.5 font-semibold tracking-tight text-[var(--color-foreground)] ${compact ? "text-sm leading-snug sm:text-2xl" : "mt-1 text-2xl"}`}
+          >
             {price}
           </p>
-          <p className="mt-1 text-[10px] leading-snug text-[var(--color-muted)]">
-            Amazon updates pricing and availability frequently — confirm the live listing before you purchase.
-          </p>
+          {!compact && (
+            <p className="mt-1 text-[10px] leading-snug text-[var(--color-muted)]">
+              Amazon updates pricing and availability frequently — confirm the live listing before you purchase.
+            </p>
+          )}
         </div>
       )}
 
@@ -102,9 +117,9 @@ function AmazonBlock({ product }: { product: Product }) {
           href={url}
           target="_blank"
           rel="sponsored noopener noreferrer"
-          className="inline-flex w-full items-center justify-center rounded-full bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-[var(--color-background)] transition hover:brightness-110 sm:w-auto"
+          className={`inline-flex w-full items-center justify-center rounded-full bg-[var(--color-accent)] font-semibold text-[var(--color-background)] transition hover:brightness-110 ${compact ? "mt-2 px-3 py-2 text-[11px] sm:px-5 sm:py-2.5 sm:text-sm" : "px-5 py-2.5 text-sm sm:w-auto"}`}
         >
-          Go to Amazon
+          Amazon
         </a>
       ) : (
         <p className="text-xs text-[var(--color-muted)]">
@@ -113,10 +128,15 @@ function AmazonBlock({ product }: { product: Product }) {
         </p>
       )}
 
-      {hasLink && (
+      {hasLink && !compact && (
         <p className="text-[10px] leading-snug text-[var(--color-muted)]">
           <span className="font-medium text-[var(--color-foreground)]">#CommissionsEarned</span> — paid link. As an
           Amazon Associate we earn from qualifying purchases. See footer for full disclosure.
+        </p>
+      )}
+      {hasLink && compact && (
+        <p className="mt-1 text-[8px] leading-tight text-[var(--color-muted)] sm:hidden">
+          <span className="text-[var(--color-foreground)]">#CommissionsEarned</span>
         </p>
       )}
     </div>

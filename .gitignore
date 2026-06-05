@@ -30,6 +30,11 @@ yarn-error.log*
 .env
 .env*.local
 
+# laptop ingest drafts (review locally; may contain scraped hints)
+tools/laptop_ingest/drafts/
+tools/laptop_ingest/.env
+tools/serp_research/.env
+
 # vercel
 .vercel
 
