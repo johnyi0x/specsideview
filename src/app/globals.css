@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: oklch(0.12 0.03 260);
+  --color-foreground: oklch(0.97 0.01 260);
+  --color-muted: oklch(0.55 0.02 260);
+  --color-card: oklch(0.16 0.04 260);
+  --color-card-border: oklch(0.28 0.06 260);
+  --color-accent: oklch(0.72 0.19 195);
+  --color-accent-dim: oklch(0.45 0.12 195);
+  --color-glow: oklch(0.62 0.22 250);
+  --color-grid: oklch(0.22 0.04 260);
+
+  /* Chart bars: product A = mint/teal, product B = violet (distinct in dark + light) */
+  --chart-series-a: oklch(0.78 0.16 195);
+  --chart-series-b: oklch(0.72 0.22 290);
+
+  color-scheme: dark light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+html.light,
+html.light body {
+  --color-background: oklch(0.985 0.005 260);
+  --color-foreground: oklch(0.14 0.03 260);
+  --color-muted: oklch(0.45 0.02 260);
+  --color-card: oklch(1 0 0);
+  --color-card-border: oklch(0.88 0.02 260);
+  --color-accent: oklch(0.52 0.16 250);
+  --color-accent-dim: oklch(0.42 0.14 250);
+  --color-glow: oklch(0.55 0.18 250);
+  --color-grid: oklch(0.9 0.02 260);
+
+  /* Light mode: keep two bar hues clearly separated (mint vs purple), not two blues */
+  --chart-series-a: oklch(0.52 0.17 185);
+  --chart-series-b: oklch(0.48 0.24 295);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle mission-control grid */
+.bg-mission-grid {
+  background-image:
+    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.text-gradient {
+  background: linear-gradient(
+    120deg,
+    var(--color-foreground) 0%,
+    var(--color-accent) 45%,
+    var(--color-glow) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card-surface {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklch, var(--color-card) 92%, white 8%) 0%,
+    var(--color-card) 100%
+  );
+  border: 1px solid var(--color-card-border);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--color-accent) 15%, transparent),
+    0 24px 80px -32px color-mix(in oklch, var(--color-glow) 35%, transparent);
+}
+
+html.light .card-surface {
+  border: 1px solid color-mix(in oklch, var(--color-accent) 22%, var(--color-card-border));
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--color-accent) 14%, transparent),
+    0 0 36px -10px color-mix(in oklch, var(--color-glow) 30%, transparent),
+    0 10px 36px -18px color-mix(in oklch, var(--color-foreground) 10%, transparent);
+}
