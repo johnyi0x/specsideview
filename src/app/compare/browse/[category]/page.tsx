@@ -4,6 +4,8 @@ import { listCategories, listProductsForCategory } from "@/lib/data";
 
 type Props = { params: Promise<{ category: string }> };
 
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   try {
     const cats = await listCategories();

@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 type Props = { params: Promise<{ slug: string }> };
 
 /** New comparison rows appear without redeploy; slugs themselves never change once set. */
+export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

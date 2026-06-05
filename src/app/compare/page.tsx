@@ -6,7 +6,11 @@ export const metadata = {
   description: "Pick a curated SpecSideView comparison or browse laptops by category.",
 };
 
+/** Always read Neon at request time — avoids empty static HTML when env vars are added after first deploy. */
+export const dynamic = "force-dynamic";
+
 export default async function CompareHubPage() {
+  const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
   const [comparisons, cats] = await Promise.all([listPublishedComparisons(), listCategories()]);
 
   return (
@@ -20,12 +24,20 @@ export default async function CompareHubPage() {
       <section className="mt-14">
         <h2 className="font-display text-xl font-semibold">Featured matchups</h2>
         {comparisons.length === 0 ? (
-          <p className="mt-4 rounded-2xl border border-dashed border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-8 text-sm text-[var(--color-muted)]">
-            No published comparisons yet. Connect <code className="text-[var(--color-accent)]">DATABASE_URL</code>, run{" "}
-            <code className="text-[var(--color-accent)]">npm run db:push</code>, then open{" "}
-            <code className="text-[var(--color-accent)]">drizzle/seed.sql</code> in your editor, copy{" "}
-            <strong className="text-[var(--color-foreground)]">all SQL</strong>, paste into the Neon SQL editor, and run
-            (do not paste the file path as SQL).
+          <p className="mt-4 rounded-2xl border border-dashed border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-8 text-sm leading-relaxed text-[var(--color-muted)]">
+            {!hasDatabaseUrl ? (
+              <>
+                This deployment has no <code className="text-[var(--color-accent)]">DATABASE_URL</code>. In Vercel →
+                Project → Settings → Environment Variables, add it for <strong className="text-[var(--color-foreground)]">Production</strong>
+                , then redeploy (Deployments → ⋯ → Redeploy).
+              </>
+            ) : (
+              <>
+                Database is connected but no published comparisons were found. Run your seed in Neon, or set{" "}
+                <code className="text-[var(--color-accent)]">published = true</code> on comparison rows. After schema or
+                env changes on Vercel, redeploy once so pages stop serving an old static build.
+              </>
+            )}
           </p>
         ) : (
           <ul className="mt-6 grid gap-4 md:grid-cols-2">
