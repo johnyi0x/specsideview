@@ -18,6 +18,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from claude_polish import polish_laptop
+from catalog import catalog_slugs, find_catalog_duplicate
 from db import list_existing_slugs
 from product_schema import slugify, validate_draft
 
@@ -62,7 +63,7 @@ def main() -> None:
     else:
         parser.error("Provide candidates.txt or --weekly")
 
-    existing = list_existing_slugs()
+    existing = list_existing_slugs() | catalog_slugs()
     drafted = 0
 
     for name in names:

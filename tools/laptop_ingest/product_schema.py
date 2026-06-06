@@ -11,7 +11,10 @@ REQUIRED_TOP = ("slug", "displayName", "specs")
 def slugify(name: str) -> str:
     s = name.lower().strip()
     s = re.sub(r"[^a-z0-9]+", "-", s)
-    return re.sub(r"-+", "-", s).strip("-")
+    s = re.sub(r"-+", "-", s).strip("-")
+    if "-vs-" in s:
+        s = s.replace("-vs-", "-")
+    return s
 
 
 def validate_draft(data: dict[str, Any]) -> list[str]:
@@ -19,6 +22,9 @@ def validate_draft(data: dict[str, Any]) -> list[str]:
     for key in REQUIRED_TOP:
         if key not in data or not data[key]:
             errors.append(f"Missing required field: {key}")
+    slug = data.get("slug")
+    if isinstance(slug, str) and "-vs-" in slug:
+        errors.append("slug must not contain '-vs-' (reserved for compare URLs)")
     specs = data.get("specs")
     if not isinstance(specs, dict):
         errors.append("specs must be an object")

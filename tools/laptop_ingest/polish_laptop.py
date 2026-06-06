@@ -18,6 +18,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from claude_polish import polish_laptop
+from catalog import find_catalog_duplicate
 from db import list_existing_slugs
 from product_schema import validate_draft
 
@@ -48,7 +49,10 @@ def main() -> None:
     errors = validate_draft(data)
     slug = data["slug"]
     if slug in list_existing_slugs():
-        errors.append(f"slug '{slug}' already exists in Neon — change slug before push")
+        errors.append(f"slug '{slug}' already exists in catalog/Neon — change slug before push")
+    dup = find_catalog_duplicate(data.get("displayName") or "", slug)
+    if dup:
+        errors.append(dup)
 
     out = args.out or (DRAFTS / f"{slug}.json")
     out.parent.mkdir(parents=True, exist_ok=True)

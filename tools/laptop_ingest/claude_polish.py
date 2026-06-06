@@ -9,6 +9,7 @@ from typing import Any
 
 from anthropic import Anthropic
 
+from catalog import catalog_summary_for_claude, find_catalog_duplicate
 from product_schema import LAPTOP_JSON_SCHEMA_HINT, slugify
 
 
@@ -35,6 +36,8 @@ def polish_laptop(
 
     user_parts = [
         f"Research and normalize this laptop for SpecSideView (category: laptops):\n{query}",
+        catalog_summary_for_claude(),
+        "If this model is already listed above, STOP and return JSON with slug/displayName matching the existing entry — do not invent a near-duplicate.",
     ]
     if amazon_hint:
         user_parts.append(f"Amazon listing hint:\n{amazon_hint}")
@@ -62,4 +65,10 @@ def polish_laptop(
     data = _extract_json(raw)
     if not data.get("slug"):
         data["slug"] = slugify(data.get("displayName") or query)
+
+    dup = find_catalog_duplicate(data.get("displayName") or query, data.get("slug"))
+    if dup:
+        data.setdefault("sourcesNote", "")
+        data["sourcesNote"] = (data["sourcesNote"] + f" DUPLICATE WARNING: {dup}.").strip()
+
     return data

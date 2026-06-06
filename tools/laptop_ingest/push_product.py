@@ -42,7 +42,7 @@ def main() -> None:
     result = insert_product_draft(data, dry_run=args.dry_run)
     print(result)
     if args.push:
-        print("Done. Publish a comparison in Neon or use create_comparison.py next.")
+        print("Done. Compare pages are built automatically at /compare/<slug-a>/<slug-b> — no comparison row needed.")
 
 
 if __name__ == "__main__":

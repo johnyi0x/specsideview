@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LanguageSelector } from "@/components/language-selector";
+import { LocaleLink } from "@/components/locale-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_LINKS = [
@@ -28,21 +29,22 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--color-card-border)]/80 bg-[var(--color-background)]/85 backdrop-blur-lg">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
-        <Link
+        <LocaleLink
           href="/"
           className="shrink-0 font-display text-lg font-semibold tracking-tight text-[var(--color-foreground)]"
           onClick={() => setMenuOpen(false)}
         >
           Spec<span className="text-[var(--color-accent)]">Side</span>View
-        </Link>
+        </LocaleLink>
 
         {/* Desktop */}
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Main">
+        <nav className="hidden items-center gap-3 text-sm font-medium md:flex" aria-label="Main">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="text-[var(--color-muted)] hover:text-[var(--color-accent)]">
+            <LocaleLink key={link.href} href={link.href} className="text-[var(--color-muted)] hover:text-[var(--color-accent)]">
               {link.label}
-            </Link>
+            </LocaleLink>
           ))}
+          <LanguageSelector />
           <ThemeToggle />
         </nav>
 
@@ -85,17 +87,18 @@ export function SiteHeader() {
             <ul className="space-y-1">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <LocaleLink
                     href={link.href}
                     className="block rounded-lg px-3 py-3 text-base font-medium text-[var(--color-foreground)] hover:bg-[color-mix(in_oklch,var(--color-accent)_10%,transparent)]"
                     onClick={() => setMenuOpen(false)}
                   >
                     {link.label}
-                  </Link>
+                  </LocaleLink>
                 </li>
               ))}
             </ul>
-            <div className="mt-4 border-t border-[var(--color-card-border)] pt-4">
+            <div className="mt-4 flex flex-col gap-3 border-t border-[var(--color-card-border)] pt-4">
+              <LanguageSelector />
               <ThemeToggle />
             </div>
           </nav>

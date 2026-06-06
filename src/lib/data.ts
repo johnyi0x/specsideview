@@ -1,6 +1,6 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { asc, count, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { categories, comparisons, products } from "@/db/schema";
+import { categories, products } from "@/db/schema";
 
 function dbOrNull() {
   if (!process.env.DATABASE_URL) return null;
@@ -16,76 +16,72 @@ export async function listCategories() {
     .orderBy(asc(categories.sortOrder), asc(categories.name));
 }
 
-export async function listPublishedComparisons() {
+export async function getCategoryBySlug(slug: string) {
   const db = dbOrNull();
-  if (!db) return [];
-  return db
-    .select({
-      slug: comparisons.slug,
-      metaTitle: comparisons.metaTitle,
-      metaDescription: comparisons.metaDescription,
-      categorySlug: categories.slug,
-      categoryName: categories.name,
-    })
-    .from(comparisons)
-    .innerJoin(categories, eq(comparisons.categoryId, categories.id))
-    .where(eq(comparisons.published, true))
-    .orderBy(desc(comparisons.createdAt));
+  if (!db) return null;
+  const rows = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
+  return rows[0] ?? null;
 }
 
-export async function getComparisonBySlug(slug: string) {
+export async function getProductBySlug(slug: string) {
   const db = dbOrNull();
   if (!db) return null;
   const rows = await db
     .select({
-      comparison: comparisons,
+      product: products,
       category: categories,
     })
-    .from(comparisons)
-    .innerJoin(categories, eq(comparisons.categoryId, categories.id))
-    .where(and(eq(comparisons.slug, slug), eq(comparisons.published, true)))
+    .from(products)
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .where(eq(products.slug, slug))
     .limit(1);
-
   const row = rows[0];
   if (!row) return null;
-
-  const [aRows, bRows] = await Promise.all([
-    db.select().from(products).where(eq(products.id, row.comparison.productAId)).limit(1),
-    db.select().from(products).where(eq(products.id, row.comparison.productBId)).limit(1),
-  ]);
-
-  const productA = aRows[0];
-  const productB = bRows[0];
-  if (!productA || !productB) return null;
-
-  return {
-    comparison: row.comparison,
-    category: row.category,
-    productA,
-    productB,
-  };
+  return row;
 }
 
-export async function listComparisonSlugs() {
-  const db = dbOrNull();
-  if (!db) return [];
-  const rows = await db
-    .select({ slug: comparisons.slug })
-    .from(comparisons)
-    .where(eq(comparisons.published, true));
-  return rows.map((r) => r.slug);
+export async function getProductPair(slugA: string, slugB: string) {
+  if (slugA === slugB) return null;
+  const [a, b] = await Promise.all([getProductBySlug(slugA), getProductBySlug(slugB)]);
+  if (!a || !b) return null;
+  return { productA: a.product, productB: b.product, categoryA: a.category, categoryB: b.category };
 }
 
-export async function listProductsForCategory(categorySlug: string) {
+export type ProductListItem = {
+  slug: string;
+  displayName: string;
+  subtitle: string | null;
+  imageUrl: string | null;
+};
+
+export async function listProductsPaginated(
+  categorySlug: string,
+  page: number,
+  pageSize: number,
+): Promise<{
+  category: typeof categories.$inferSelect;
+  products: ProductListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+} | null> {
   const db = dbOrNull();
   if (!db) return null;
-  const cat = await db
-    .select()
-    .from(categories)
-    .where(eq(categories.slug, categorySlug))
-    .limit(1);
-  const c = cat[0];
-  if (!c) return null;
+
+  const cat = await getCategoryBySlug(categorySlug);
+  if (!cat) return null;
+
+  const safePage = Math.max(1, page);
+  const offset = (safePage - 1) * pageSize;
+
+  const [totalRow] = await db
+    .select({ value: count() })
+    .from(products)
+    .where(eq(products.categoryId, cat.id));
+
+  const total = Number(totalRow?.value ?? 0);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const rows = await db
     .select({
@@ -95,7 +91,54 @@ export async function listProductsForCategory(categorySlug: string) {
       imageUrl: products.imageUrl,
     })
     .from(products)
-    .where(eq(products.categoryId, c.id))
-    .orderBy(asc(products.displayName));
-  return { category: c, products: rows };
+    .where(eq(products.categoryId, cat.id))
+    .orderBy(asc(products.displayName))
+    .limit(pageSize)
+    .offset(offset);
+
+  return {
+    category: cat,
+    products: rows,
+    total,
+    page: safePage,
+    pageSize,
+    totalPages,
+  };
+}
+
+/** Lightweight list for sitemap / registry sync */
+export async function listAllProductSlugs() {
+  const db = dbOrNull();
+  if (!db) return [];
+  const rows = await db
+    .select({
+      slug: products.slug,
+      displayName: products.displayName,
+      categorySlug: categories.slug,
+    })
+    .from(products)
+    .innerJoin(categories, eq(products.categoryId, categories.id));
+  return rows;
+}
+
+/** Featured: newest products in category — pair first two for hub teaser */
+export async function getFeaturedPair(categorySlug: string) {
+  const db = dbOrNull();
+  if (!db) return null;
+  const cat = await getCategoryBySlug(categorySlug);
+  if (!cat) return null;
+
+  const rows = await db
+    .select({
+      slug: products.slug,
+      displayName: products.displayName,
+      subtitle: products.subtitle,
+    })
+    .from(products)
+    .where(eq(products.categoryId, cat.id))
+    .orderBy(desc(products.createdAt))
+    .limit(2);
+
+  if (rows.length < 2) return null;
+  return { category: cat, a: rows[0], b: rows[1] };
 }

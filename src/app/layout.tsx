@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   },
   description:
     "Head-to-head electronics comparisons with curated specs, structured tables, benchmarks, and visual context—built to help you decide before you buy.",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+  },
   openGraph: {
     siteName: "SpecSideView",
     type: "website",

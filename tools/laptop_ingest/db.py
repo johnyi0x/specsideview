@@ -8,19 +8,49 @@ from typing import Any
 
 import psycopg
 
+from catalog import catalog_slugs, merge_catalog_entry
+
 
 def get_database_url() -> str | None:
     return os.environ.get("DATABASE_URL") or None
 
 
-def list_existing_slugs() -> set[str]:
+def fetch_all_products_for_catalog() -> list[dict[str, Any]]:
     url = get_database_url()
     if not url:
-        return set()
+        raise RuntimeError("DATABASE_URL is not set — cannot sync catalog")
+    with psycopg.connect(url) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT p.slug, p.display_name, p.subtitle, c.slug AS category_slug
+                FROM products p
+                JOIN categories c ON c.id = p.category_id
+                ORDER BY p.display_name
+                """
+            )
+            return [
+                {
+                    "slug": row[0],
+                    "displayName": row[1],
+                    "subtitle": row[2],
+                    "category": row[3],
+                }
+                for row in cur.fetchall()
+            ]
+
+
+def list_existing_slugs() -> set[str]:
+    """Union of Neon slugs (when online) and local catalog.json."""
+    slugs = catalog_slugs()
+    url = get_database_url()
+    if not url:
+        return slugs
     with psycopg.connect(url) as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT slug FROM products")
-            return {row[0] for row in cur.fetchall()}
+            slugs |= {row[0] for row in cur.fetchall()}
+    return slugs
 
 
 def slug_exists(slug: str) -> bool:
@@ -30,7 +60,7 @@ def slug_exists(slug: str) -> bool:
 def insert_product_draft(data: dict[str, Any], *, dry_run: bool = False) -> str:
     slug = data["slug"]
     if slug_exists(slug):
-        raise ValueError(f"Duplicate slug already in database: {slug}")
+        raise ValueError(f"Duplicate slug already in database or catalog: {slug}")
 
     sql = """
     INSERT INTO products (category_id, slug, display_name, subtitle, image_url, amazon_url, amazon_price_label, specs)
@@ -60,7 +90,16 @@ def insert_product_draft(data: dict[str, Any], *, dry_run: bool = False) -> str:
             if cur.rowcount == 0:
                 raise RuntimeError("Insert failed — laptops category missing or slug conflict")
         conn.commit()
-    return f"Inserted product: {slug}"
+
+    merge_catalog_entry(
+        {
+            "slug": slug,
+            "displayName": data["displayName"],
+            "subtitle": data.get("subtitle"),
+            "category": "laptops",
+        }
+    )
+    return f"Inserted product: {slug} (catalog.json updated)"
 
 
 def _format_insert_sql(params: dict[str, Any]) -> str:

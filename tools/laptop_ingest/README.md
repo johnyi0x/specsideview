@@ -2,6 +2,13 @@
 
 Semi-automatic pipeline for **laptops** — separate from the Next.js app. Uses **Claude** to draft normalized JSON you review before Neon insert.
 
+## Architecture (important)
+
+- **Database stores individual products only** — one row per laptop.
+- **Compare pages are generated on the fly** at `/compare/{slug-a}-vs-{slug-b}` (versus/nanoreview style; slugs sorted alphabetically for one canonical URL per pair).
+- You do **not** need `create_comparison.py` or rows in the `comparisons` table for new pairs. That table is legacy for old URLs only.
+- **`catalog.json`** is a local registry synced from Neon. Claude reads it so new drafts avoid duplicate slugs/names — run `sync_catalog.py` after pulling prod data or on a new machine.
+
 ## Setup (Windows)
 
 ```powershell
@@ -15,9 +22,17 @@ copy .env.example .env
 Set in `.env` or Windows user environment:
 
 - `ANTHROPIC_API_KEY` — required
-- `DATABASE_URL` — optional until `--push` (same Neon string as Vercel)
+- `DATABASE_URL` — optional until `--push` / `sync_catalog.py` (same Neon string as Vercel)
 
 ## Workflow
+
+### 0. Sync local catalog (recommended first)
+
+```powershell
+python sync_catalog.py
+```
+
+Writes `catalog.json` from Neon. Claude and `polish_laptop.py` use this to block duplicates even when you are offline from the DB.
 
 ### 1. Draft one laptop (Claude)
 
@@ -35,15 +50,15 @@ python push_product.py drafts\macbook-pro-16-m4-max.json --dry-run
 python push_product.py drafts\macbook-pro-16-m4-max.json --push
 ```
 
-Duplicate slugs are rejected.
+Duplicate slugs are rejected (catalog + Neon). After push, `catalog.json` is updated automatically.
 
-### 3. Publish a comparison page
+### 3. Live on site
 
-```powershell
-python create_comparison.py macbook-pro-16 dell-xps-15 --push --title "MacBook Pro 16 vs Dell XPS 15"
-```
+- Hub: `https://specsideview.com/compare`
+- Pick category → pick two items → **Compare**
+- Or direct URL: `https://specsideview.com/compare/neo-laptop-alpha-vs-voyage-air-thirteen`
 
-Live URL: `https://specsideview.com/compare/<comparison-slug>` (immutable — do not change slug after ads).
+Every new product instantly combines with every other product — no extra DB work per pair.
 
 ### 4. Batch / weekly new models
 
@@ -53,17 +68,11 @@ Edit `watchlist.txt`, then:
 python discover_laptops.py --weekly --limit 3
 ```
 
-Or a one-off list file:
+Skips products already in `catalog.json`, Neon, or `drafts/`.
 
-```powershell
-python discover_laptops.py my-candidates.txt
-```
+## Legacy: `create_comparison.py`
 
-Skips products already in Neon or `drafts/`.
-
-## Product direction (roadmap)
-
-SpecSideView is moving toward a **versus-style** flow (pick category → pick item → pick opponent) and **nanoreview-style** depth (spec tables + size graphics). This tool only feeds the database; the site UI will evolve toward that structure over time.
+Optional — only needed if you still use old single-slug URLs (`/compare/neobook-alpha-16-vs-voyage-air-13`). New work should **not** use this script.
 
 ## Still manual (on purpose)
 

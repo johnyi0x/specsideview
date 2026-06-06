@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LocaleLink } from "@/components/locale-link";
 
 export const metadata: Metadata = {
   title: "About",
@@ -37,10 +37,10 @@ export default function AboutPage() {
 
       <h2 className="font-display mt-12 text-2xl font-semibold">Stable comparison URLs</h2>
       <p className="mt-4 text-[var(--color-muted)]">
-        Each published comparison uses an immutable slug (for example{" "}
-        <code className="text-[var(--color-accent)]">/compare/macbook-pro-16-m4-max-vs-galaxy-book4-ultra</code>
-        ). You can point Google Ads or organic campaigns at that URL with confidence: when we add tables, refine copy,
-        or extend the visual sections, the slug—and therefore your landing URL—stays the same.
+        Products are stored once in the database. A comparison page is assembled from any two product slugs—for example{" "}
+        <code className="text-[var(--color-accent)]">/en/compare/neo-laptop-alpha-vs-voyage-air-thirteen</code>
+        . Slugs are sorted alphabetically so each pair has one canonical URL for SEO. Add a new laptop and it instantly
+        pairs with every other laptop—no separate “comparison page” row per matchup.
       </p>
 
       <h2 className="font-display mt-12 text-2xl font-semibold">Amazon affiliate relationship</h2>
@@ -57,9 +57,9 @@ export default function AboutPage() {
       </p>
 
       <p className="mt-16">
-        <Link href="/compare" className="text-[var(--color-accent)] hover:underline">
-          Browse comparisons →
-        </Link>
+        <LocaleLink href="/compare" className="text-[var(--color-accent)] hover:underline">
+          Pick a category to compare →
+        </LocaleLink>
       </p>
     </article>
   );

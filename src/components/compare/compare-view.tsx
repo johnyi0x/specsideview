@@ -1,18 +1,17 @@
 "use client";
 
-import type { Comparison, Product, Category } from "@/db/schema";
+import type { Product, Category } from "@/db/schema";
 import { BenchmarkBars } from "@/components/compare/benchmark-bars";
 import { RamStorageMeters } from "@/components/compare/ram-storage-meters";
 import { ScreenSilhouettes } from "@/components/compare/screen-silhouettes";
 import { WeightCompare } from "@/components/compare/weight-compare";
 import { ComparePairGrid } from "@/components/compare/compare-pair-grid";
 import { parseLaptopSpecs } from "@/lib/spec-types";
-import Link from "next/link";
+import { LocaleLink } from "@/components/locale-link";
 import { motion } from "framer-motion";
 
 export type ComparePayload = {
-  slug: string;
-  comparison: Pick<Comparison, "metaTitle" | "metaDescription">;
+  pairPath: string;
   category: Pick<Category, "name" | "slug">;
   productA: Product;
   productB: Product;
@@ -144,7 +143,7 @@ function AmazonBlock({ product, compact = false }: { product: Product; compact?:
 }
 
 export function CompareView({ payload }: { payload: ComparePayload }) {
-  const { productA, productB, category, comparison, slug } = payload;
+  const { productA, productB, category, pairPath } = payload;
   const specsA = parseLaptopSpecs((productA.specs ?? {}) as Record<string, unknown>);
   const specsB = parseLaptopSpecs((productB.specs ?? {}) as Record<string, unknown>);
 
@@ -154,13 +153,15 @@ export function CompareView({ payload }: { payload: ComparePayload }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
       <div className="mb-8 flex flex-wrap items-center gap-3 text-xs text-[var(--color-muted)]">
-        <Link href="/compare" className="hover:text-[var(--color-accent)]">
-          Comparisons
-        </Link>
+        <LocaleLink href="/compare" className="hover:text-[var(--color-accent)]">
+          Categories
+        </LocaleLink>
         <span>/</span>
-        <span className="uppercase tracking-wider">{category.name}</span>
+        <LocaleLink href={`/compare/category/${category.slug}`} className="hover:text-[var(--color-accent)]">
+          {category.name}
+        </LocaleLink>
         <span>/</span>
-        <span className="font-mono text-[10px] text-[var(--color-accent)]">{slug}</span>
+        <span className="font-mono text-[10px] text-[var(--color-accent)]">{pairPath.replace("/compare/", "")}</span>
       </div>
 
       <motion.header initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl">
@@ -169,10 +170,9 @@ export function CompareView({ payload }: { payload: ComparePayload }) {
           {productA.displayName}{" "}
           <span className="text-[var(--color-muted)]">vs</span> {productB.displayName}
         </h1>
-        {comparison.metaTitle && <p className="mt-2 text-sm text-[var(--color-muted)]">{comparison.metaTitle}</p>}
         <p className="mt-4 text-base text-[var(--color-muted)]">
-          {comparison.metaDescription ??
-            "Curated specs, benchmarks, and side-by-side context—tables and visuals together so you can see how these two models differ where it matters."}
+          Curated specs, benchmarks, and side-by-side context—tables and visuals together so you can see how these two
+          models differ where it matters.
         </p>
       </motion.header>
 

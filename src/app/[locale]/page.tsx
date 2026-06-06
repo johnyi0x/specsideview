@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/locale-link";
 
 export default function HomePage() {
   return (
@@ -21,20 +21,20 @@ export default function HomePage() {
           comparisons side by side—so you can weigh tradeoffs without guessing or pasting SKUs into a chatbot.
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link
+          <LocaleLink
             href="/compare"
             className="inline-flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-8 py-3 text-sm font-semibold text-[var(--color-background)] transition hover:brightness-110"
             style={{ boxShadow: "0 0 40px color-mix(in oklch, var(--color-accent) 45%, transparent)" }}
           >
             <span className="text-lg leading-none">+</span>
             Start a comparison
-          </Link>
-          <Link
+          </LocaleLink>
+          <LocaleLink
             href="/about"
             className="text-sm font-medium text-[var(--color-muted)] underline-offset-4 hover:text-[var(--color-accent)] hover:underline"
           >
             How it works
-          </Link>
+          </LocaleLink>
         </div>
       </div>
     </div>

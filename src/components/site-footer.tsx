@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/locale-link";
 
 const AMAZON_POLICIES = "https://affiliate-program.amazon.com/help/operating/agreement";
 
@@ -38,9 +38,9 @@ export function SiteFooter() {
         </p>
         <p className="mt-6 text-xs text-[var(--color-muted)]">
           © {new Date().getFullYear()} SpecSideView ·{" "}
-          <Link href="/about" className="text-[var(--color-accent)] hover:underline">
+          <LocaleLink href="/about" className="text-[var(--color-accent)] hover:underline">
             About
-          </Link>
+          </LocaleLink>
         </p>
       </div>
     </footer>
