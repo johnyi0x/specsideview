@@ -1,6 +1,11 @@
-import { asc, count, desc, eq } from "drizzle-orm";
+import { asc, count, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { categories, products } from "@/db/schema";
+import {
+  comparisonPairsForPage,
+  totalComparisonPairs,
+  type ComparisonPairPreview,
+} from "@/lib/compare-pairs";
 
 function dbOrNull() {
   if (!process.env.DATABASE_URL) return null;
@@ -121,10 +126,22 @@ export async function listAllProductSlugs() {
   return rows;
 }
 
-/** Featured: newest products in category — pair first two for hub teaser */
-export async function getFeaturedPair(categorySlug: string) {
+/** All comparison pairs in a category — paginated (for hub featured list). */
+export async function listComparisonPairsPaginated(
+  categorySlug: string,
+  page: number,
+  pageSize: number,
+): Promise<{
+  category: typeof categories.$inferSelect;
+  pairs: ComparisonPairPreview[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+} | null> {
   const db = dbOrNull();
   if (!db) return null;
+
   const cat = await getCategoryBySlug(categorySlug);
   if (!cat) return null;
 
@@ -132,13 +149,37 @@ export async function getFeaturedPair(categorySlug: string) {
     .select({
       slug: products.slug,
       displayName: products.displayName,
-      subtitle: products.subtitle,
     })
     .from(products)
     .where(eq(products.categoryId, cat.id))
-    .orderBy(desc(products.createdAt))
-    .limit(2);
+    .orderBy(asc(products.displayName));
 
-  if (rows.length < 2) return null;
-  return { category: cat, a: rows[0], b: rows[1] };
+  const total = totalComparisonPairs(rows.length);
+  if (total === 0) return null;
+
+  const safePage = Math.max(1, page);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const clampedPage = Math.min(safePage, totalPages);
+  const pairs = comparisonPairsForPage(rows, clampedPage, pageSize);
+
+  return {
+    category: cat,
+    pairs,
+    total,
+    page: clampedPage,
+    pageSize,
+    totalPages,
+  };
+}
+
+/** @deprecated use listComparisonPairsPaginated */
+export async function getFeaturedPair(categorySlug: string) {
+  const bundle = await listComparisonPairsPaginated(categorySlug, 1, 1);
+  if (!bundle || bundle.pairs.length === 0) return null;
+  const pair = bundle.pairs[0];
+  return {
+    category: bundle.category,
+    a: { slug: pair.slugA, displayName: pair.nameA },
+    b: { slug: pair.slugB, displayName: pair.nameB },
+  };
 }

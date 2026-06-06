@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { listCategories, getFeaturedPair } from "@/lib/data";
+import { listCategories, listComparisonPairsPaginated } from "@/lib/data";
 import { CategoryGrid } from "@/components/compare/category-grid";
-import { comparePairPath } from "@/lib/compare-url";
+import { FeaturedComparisons } from "@/components/compare/featured-comparisons";
 import type { Locale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -11,16 +10,20 @@ export const metadata = {
   description: "Choose a category, pick two products, and compare specs side by side on SpecSideView.",
 };
 
-type Props = { params: Promise<{ locale: Locale }> };
+const FEATURED_PAGE_SIZE = 3;
 
-export default async function CompareHubPage({ params }: Props) {
+type Props = {
+  params: Promise<{ locale: Locale }>;
+  searchParams: Promise<{ featuredPage?: string }>;
+};
+
+export default async function CompareHubPage({ params, searchParams }: Props) {
   const { locale } = await params;
+  const sp = await searchParams;
+  const featuredPage = Math.max(1, parseInt(sp.featuredPage ?? "1", 10) || 1);
+
   const cats = await listCategories();
-  const featured = await getFeaturedPair("laptops");
-  const featuredHref =
-    featured && featured.a.slug !== featured.b.slug
-      ? comparePairPath(featured.a.slug, featured.b.slug, locale)
-      : null;
+  const featured = await listComparisonPairsPaginated("laptops", featuredPage, FEATURED_PAGE_SIZE);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-14 md:py-20">
@@ -35,21 +38,15 @@ export default async function CompareHubPage({ params }: Props) {
         </div>
       </section>
 
-      {featuredHref && featured && (
-        <section className="mt-16">
-          <h2 className="font-display text-xl font-semibold">Featured comparison</h2>
-          <Link
-            href={featuredHref}
-            className="card-surface mt-6 block rounded-2xl p-6 transition hover:border-[var(--color-accent)]"
-          >
-            <p className="font-display text-lg font-semibold text-[var(--color-accent)]">
-              {featured.a.displayName} vs {featured.b.displayName}
-            </p>
-            <p className="mt-2 text-sm text-[var(--color-muted)]">Open comparison →</p>
-          </Link>
-        </section>
+      {featured && featured.pairs.length > 0 && (
+        <FeaturedComparisons
+          locale={locale}
+          pairs={featured.pairs}
+          page={featured.page}
+          totalPages={featured.totalPages}
+          total={featured.total}
+        />
       )}
-
     </div>
   );
 }
