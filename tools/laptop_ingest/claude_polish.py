@@ -53,8 +53,11 @@ def polish_laptop(
         max_tokens=4096,
         system=(
             "You prepare electronics spec data for a comparison website. "
-            "When verified Amazon JSON is provided, copy amazonAsin, amazonUrl, amazonPriceLabel, imageUrl exactly. "
+            "Research and fill displayName, subtitle, specs, amazonAsin, amazonUrl, amazonPriceLabel, and imageUrl "
+            "for the exact US Amazon listing of this laptop config when possible. "
             "amazonPriceLabel must be price only (e.g. $949.00), never dates or notes. "
+            "imageUrl should be a direct m.media-amazon.com product image when possible. "
+            "When verified Amazon JSON is provided in the prompt, copy those Amazon fields exactly. "
             "Fill all spec sections thoroughly (connectivity, ports, input, battery). "
             "Mark estimates in sourcesNote. Output JSON only."
         ),

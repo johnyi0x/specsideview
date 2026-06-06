@@ -1,4 +1,4 @@
-import { asc, count, eq } from "drizzle-orm";
+import { and, asc, count, eq, ilike, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { categories, products } from "@/db/schema";
 import {
@@ -63,6 +63,7 @@ export async function listProductsPaginated(
   categorySlug: string,
   page: number,
   pageSize: number,
+  search?: string,
 ): Promise<{
   category: typeof categories.$inferSelect;
   products: ProductListItem[];
@@ -70,6 +71,7 @@ export async function listProductsPaginated(
   page: number;
   pageSize: number;
   totalPages: number;
+  search: string;
 } | null> {
   const db = dbOrNull();
   if (!db) return null;
@@ -77,16 +79,27 @@ export async function listProductsPaginated(
   const cat = await getCategoryBySlug(categorySlug);
   if (!cat) return null;
 
-  const safePage = Math.max(1, page);
-  const offset = (safePage - 1) * pageSize;
+  const q = search?.trim() ?? "";
+  const whereClause =
+    q.length > 0
+      ? and(
+          eq(products.categoryId, cat.id),
+          or(
+            ilike(products.displayName, `%${q}%`),
+            ilike(products.subtitle, `%${q}%`),
+            ilike(products.slug, `%${q}%`),
+          ),
+        )
+      : eq(products.categoryId, cat.id);
 
-  const [totalRow] = await db
-    .select({ value: count() })
-    .from(products)
-    .where(eq(products.categoryId, cat.id));
+  const safePage = Math.max(1, page);
+
+  const [totalRow] = await db.select({ value: count() }).from(products).where(whereClause);
 
   const total = Number(totalRow?.value ?? 0);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const clampedPage = Math.min(safePage, totalPages);
+  const offset = (clampedPage - 1) * pageSize;
 
   const rows = await db
     .select({
@@ -96,7 +109,7 @@ export async function listProductsPaginated(
       imageUrl: products.imageUrl,
     })
     .from(products)
-    .where(eq(products.categoryId, cat.id))
+    .where(whereClause)
     .orderBy(asc(products.displayName))
     .limit(pageSize)
     .offset(offset);
@@ -105,9 +118,10 @@ export async function listProductsPaginated(
     category: cat,
     products: rows,
     total,
-    page: safePage,
+    page: clampedPage,
     pageSize,
     totalPages,
+    search: q,
   };
 }
 

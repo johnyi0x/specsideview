@@ -1,13 +1,29 @@
 {
-  "updatedAt": "2026-06-06T07:44:30.461733+00:00",
+  "updatedAt": "2026-06-06T09:46:41.672292+00:00",
   "products": [
+    {
+      "slug": "acer-swift-14-ai-2024",
+      "displayName": "Acer Swift 14 AI (2024)",
+      "subtitle": "Intel Core Ultra 7 258V, 32GB LPDDR5X, 1TB SSD, 14\" WUXGA touch",
+      "category": "laptops",
+      "amazonAsin": "B0FWSSXJ24",
+      "modelSku": "SF14-51T-78YQ"
+    },
+    {
+      "slug": "apple-macbook-air-13-m4-2025",
+      "displayName": "MacBook Air 13 M4 (2025)",
+      "subtitle": "Apple M4 10-core, 16GB unified memory, 256GB SSD, 13.6\" Liquid Retina",
+      "category": "laptops",
+      "amazonAsin": "B0F518SXRM",
+      "modelSku": "MW123LL/A"
+    },
     {
       "slug": "apple-macbook-air-15-m4-2025",
       "displayName": "MacBook Air 15 M4 (2025)",
       "subtitle": "Apple M4 10-core, 16GB unified memory, 256GB SSD, 15.3\" Liquid Retina",
       "category": "laptops",
       "amazonAsin": "B0FCZX2G2S",
-      "modelSku": "MC8K4LL/A"
+      "modelSku": null
     },
     {
       "slug": "apple-macbook-pro-14-m4-pro-2024",
@@ -15,7 +31,47 @@
       "subtitle": "M4 Pro 12-core CPU / 16-core GPU, 24GB RAM, 512GB SSD, Space Black",
       "category": "laptops",
       "amazonAsin": "B0DLHY2BJ6",
-      "modelSku": "MX2H3LL/A"
+      "modelSku": null
+    },
+    {
+      "slug": "apple-macbook-pro-16-m4-max-2024",
+      "displayName": "MacBook Pro 16\" (M4 Max, 2024)",
+      "subtitle": "M4 Max 14-core CPU, 48GB RAM, 1TB SSD, 16.2\" Liquid Retina XDR",
+      "category": "laptops",
+      "amazonAsin": "B0DN25LGK8",
+      "modelSku": "MX313LL/A"
+    },
+    {
+      "slug": "asus-proart-p16-2024",
+      "displayName": "ASUS ProArt P16 (2024)",
+      "subtitle": "Ryzen AI 9 HX 370, RTX 5070, 32GB, 4TB, 16\" 3K OLED Touch",
+      "category": "laptops",
+      "amazonAsin": "B0GX4T1V34",
+      "modelSku": "H7606WI-XS99"
+    },
+    {
+      "slug": "asus-rog-zephyrus-g14-2024",
+      "displayName": "ASUS ROG Zephyrus G14 (2024)",
+      "subtitle": "Ryzen 9 8945HS, RTX 4060, 16GB RAM, 1TB SSD, 14\" OLED 120Hz",
+      "category": "laptops",
+      "amazonAsin": "B0CWCZVWDK",
+      "modelSku": "GA403UI-XS97"
+    },
+    {
+      "slug": "asus-rog-zephyrus-g16-2025",
+      "displayName": "ASUS ROG Zephyrus G16 (2025)",
+      "subtitle": "Core Ultra 9 285H, RTX 5070, 16 GB RAM, 1 TB SSD, 16\" OLED 240 Hz",
+      "category": "laptops",
+      "amazonAsin": "B0DYZB46YD",
+      "modelSku": "GU605CX-XS99"
+    },
+    {
+      "slug": "asus-zenbook-14-oled-2024-core-ultra",
+      "displayName": "ASUS Zenbook 14 OLED (2024, Core Ultra)",
+      "subtitle": "Core Ultra 9 285H, 32GB LPDDR5x, 1TB SSD, 14\" WUXGA OLED touch",
+      "category": "laptops",
+      "amazonAsin": "B0FHPRX53T",
+      "modelSku": "UX3405MA-PP742W"
     },
     {
       "slug": "dell-xps-13-9350-2025",
@@ -23,7 +79,95 @@
       "subtitle": "Core Ultra 7 256V, 16GB, 1TB, 13.4\" FHD+ 120Hz",
       "category": "laptops",
       "amazonAsin": "B0G38965Y5",
-      "modelSku": "XPS9350"
+      "modelSku": null
+    },
+    {
+      "slug": "dell-xps-16-9650-2025",
+      "displayName": "Dell XPS 16 9650 (2025)",
+      "subtitle": "Core Ultra 9 285H, RTX 5060, 32GB RAM, 2TB SSD, 16.3\" OLED",
+      "category": "laptops",
+      "amazonAsin": "B0G2CZQ9LT",
+      "modelSku": "XPS 9650"
+    },
+    {
+      "slug": "framework-laptop-13-2024-core-ultra",
+      "displayName": "Framework Laptop 13 (2024, Core Ultra)",
+      "subtitle": "Intel Core Ultra 7 155H, 32GB DDR5, 1TB SSD, 13.5\" 2256x1504",
+      "category": "laptops",
+      "amazonAsin": "B0GWHVXWP4",
+      "modelSku": null
+    },
+    {
+      "slug": "hp-omnibook-ultra-flip-14-2024",
+      "displayName": "HP OmniBook Ultra Flip 14 (2024)",
+      "subtitle": "Core Ultra 9 288V, 32GB, 4TB, 14\" 2.8K OLED touch convertible",
+      "category": "laptops",
+      "amazonAsin": "B0FN7SMLP2",
+      "modelSku": "14-fd0097nr"
+    },
+    {
+      "slug": "hp-spectre-x360-14-2024",
+      "displayName": "HP Spectre x360 14 (2024)",
+      "subtitle": "Core Ultra 7 155H, 16GB LPDDR5, 1TB SSD, 14\" 2.8K OLED 120Hz touch",
+      "category": "laptops",
+      "amazonAsin": "B0FL79QJZG",
+      "modelSku": "14-eu0097nr"
+    },
+    {
+      "slug": "lenovo-legion-pro-5i-gen-10-2025",
+      "displayName": "Lenovo Legion Pro 5i Gen 10 (2025)",
+      "subtitle": "Core Ultra 9 275HX · RTX 5070 Ti · 32GB · 2TB · 16\" OLED 240Hz",
+      "category": "laptops",
+      "amazonAsin": "B0F9XSW5HB",
+      "modelSku": "83LR0001US"
+    },
+    {
+      "slug": "lenovo-legion-pro-7i-gen-10-2025",
+      "displayName": "Lenovo Legion Pro 7i Gen 10 (2025)",
+      "subtitle": "Core Ultra 9 275HX, RTX 5080, 32GB RAM, 1TB SSD, 16\" OLED 240Hz",
+      "category": "laptops",
+      "amazonAsin": "B0FL4HLJ56",
+      "modelSku": null
+    },
+    {
+      "slug": "lenovo-thinkpad-x1-carbon-gen-12",
+      "displayName": "ThinkPad X1 Carbon Gen 12",
+      "subtitle": "14\" WUXGA, Intel Core Ultra 5 125U, 16GB RAM, 512GB SSD",
+      "category": "laptops",
+      "amazonAsin": "B0D7C3KYBC",
+      "modelSku": "21KC0058US"
+    },
+    {
+      "slug": "lenovo-thinkpad-x1-carbon-gen-13-2025",
+      "displayName": "ThinkPad X1 Carbon Gen 13 (2025)",
+      "subtitle": "Core Ultra 7 255U, 32GB RAM, 1TB SSD, 14\" FHD+ touch",
+      "category": "laptops",
+      "amazonAsin": "B0DZ2FRQVY",
+      "modelSku": "21NL0013US"
+    },
+    {
+      "slug": "lenovo-yoga-slim-9i-14-2024",
+      "displayName": "Lenovo Yoga Slim 9i (14, 2024)",
+      "subtitle": "Intel Core Ultra 7 258V, 32GB LPDDR5X, 1TB SSD, 14\" 4K OLED 120Hz",
+      "category": "laptops",
+      "amazonAsin": "B0FNXZGXRM",
+      "modelSku": "83AC0007US"
+    },
+    {
+      "slug": "microsoft-surface-laptop-7-15-2024",
+      "displayName": "Surface Laptop 7 15\" (2024)",
+      "subtitle": "Snapdragon X Elite, 16 GB RAM, 512 GB SSD, 15\" PixelSense touch",
+      "category": "laptops",
+      "amazonAsin": "B0DYQF27W1",
+      "modelSku": "ZGP-00001"
+    },
+    {
+      "slug": "razer-blade-16-2024",
+      "displayName": "Razer Blade 16 (2024)",
+      "subtitle": "Intel Core i9-14900HX, RTX 4070, 32GB RAM, 1TB SSD, 16\" QHD+ 240Hz OLED",
+      "category": "laptops",
+      "amazonAsin": "B0DX2CYF5Y",
+      "modelSku": "RZ09-0483AEH3-R3U1"
     }
   ]
 }

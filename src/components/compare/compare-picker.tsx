@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import type { ProductListItem } from "@/lib/data";
 import { comparePairPath } from "@/lib/compare-url";
 import { defaultLocale, localizedPath, type Locale } from "@/lib/i18n";
@@ -14,6 +14,7 @@ type Props = {
   products: ProductListItem[];
   page: number;
   totalPages: number;
+  search?: string;
   initialA?: string;
   initialB?: string;
   initialSlotLabels?: {
@@ -28,6 +29,7 @@ export function ComparePicker({
   products,
   page,
   totalPages,
+  search = "",
   initialA,
   initialB,
   initialSlotLabels,
@@ -38,6 +40,11 @@ export function ComparePicker({
   const locale = (typeof params?.locale === "string" ? params.locale : defaultLocale) as Locale;
   const [slotA, setSlotA] = useState(initialA ?? "");
   const [slotB, setSlotB] = useState(initialB ?? "");
+  const [query, setQuery] = useState(search);
+
+  useEffect(() => {
+    setQuery(search);
+  }, [search]);
 
   const nameBySlug = useMemo(() => {
     const m = new Map<string, string>();
@@ -66,12 +73,32 @@ export function ComparePicker({
 
   const compareHref = slotA && slotB && slotA !== slotB ? comparePairPath(slotA, slotB, locale) : null;
 
-  const goPage = (p: number) => {
+  const buildUrl = (patch: Record<string, string | undefined>) => {
     const qs = new URLSearchParams(searchParams.toString());
-    qs.set("page", String(p));
+    for (const [key, val] of Object.entries(patch)) {
+      if (val) qs.set(key, val);
+      else qs.delete(key);
+    }
     if (slotA) qs.set("a", slotA);
+    else qs.delete("a");
     if (slotB) qs.set("b", slotB);
-    router.push(`${localizedPath(`/compare/category/${categorySlug}`, locale)}?${qs.toString()}`);
+    else qs.delete("b");
+    return `${localizedPath(`/compare/category/${categorySlug}`, locale)}?${qs.toString()}`;
+  };
+
+  const goPage = (p: number) => {
+    router.push(buildUrl({ page: String(p) }));
+  };
+
+  const submitSearch = (e: FormEvent) => {
+    e.preventDefault();
+    const trimmed = query.trim();
+    router.push(buildUrl({ q: trimmed || undefined, page: "1" }));
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    router.push(buildUrl({ q: undefined, page: "1" }));
   };
 
   return (
@@ -108,13 +135,49 @@ export function ComparePicker({
       </div>
 
       <div>
-        <h2 className="font-display text-xl font-semibold">All {categoryName.toLowerCase()}</h2>
-        <p className="mt-1 text-sm text-[var(--color-muted)]">
-          Tap a row or <span className="text-[var(--color-accent)]">+ vs</span> to fill the next open slot.
-        </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-display text-xl font-semibold">All {categoryName.toLowerCase()}</h2>
+            <p className="mt-1 text-sm text-[var(--color-muted)]">
+              Tap a row or <span className="text-[var(--color-accent)]">+ vs</span> to fill the next open slot.
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={submitSearch} className="mt-4 flex gap-2">
+          <label htmlFor="product-search" className="sr-only">
+            Search {categoryName.toLowerCase()}
+          </label>
+          <input
+            id="product-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${categoryName.toLowerCase()}…`}
+            className="min-w-0 flex-1 rounded-xl border border-[var(--color-card-border)] bg-[var(--color-background)] px-4 py-2.5 text-sm outline-none transition focus:border-[var(--color-accent)]"
+          />
+          <button
+            type="submit"
+            className="shrink-0 rounded-xl border border-[var(--color-card-border)] px-4 py-2.5 text-sm font-medium transition hover:border-[var(--color-accent)]"
+          >
+            Search
+          </button>
+          {search && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="shrink-0 rounded-xl px-3 py-2.5 text-sm text-[var(--color-muted)] transition hover:text-[var(--color-accent)]"
+            >
+              Clear
+            </button>
+          )}
+        </form>
+
         <ul className="mt-6 divide-y divide-[var(--color-card-border)] rounded-2xl border border-[var(--color-card-border)] bg-[var(--color-card)]">
           {products.length === 0 ? (
-            <li className="p-8 text-center text-sm text-[var(--color-muted)]">No products in this category yet.</li>
+            <li className="p-8 text-center text-sm text-[var(--color-muted)]">
+              {search ? `No results for “${search}”.` : "No products in this category yet."}
+            </li>
           ) : (
             products.map((p) => {
               const selected = p.slug === slotA || p.slug === slotB;

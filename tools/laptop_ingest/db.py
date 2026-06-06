@@ -169,3 +169,105 @@ def _sql_literal(val: Any) -> str:
     if val is None:
         return "NULL"
     return "'" + str(val).replace("'", "''") + "'"
+
+
+def fetch_product_by_slug(slug: str) -> dict[str, Any] | None:
+    """Full product row joined with category slug."""
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT p.slug, p.display_name, p.subtitle, p.image_url, p.amazon_url,
+                       p.amazon_price_label, p.specs, c.slug AS category_slug
+                FROM products p
+                JOIN categories c ON c.id = p.category_id
+                WHERE p.slug = %s
+                LIMIT 1
+                """,
+                (slug,),
+            )
+            row = cur.fetchone()
+            if not row:
+                return None
+            slug_, name, subtitle, image_url, amazon_url, price, specs, category = row
+            return {
+                "slug": slug_,
+                "displayName": name,
+                "subtitle": subtitle,
+                "imageUrl": image_url,
+                "amazonUrl": amazon_url,
+                "amazonPriceLabel": price,
+                "amazonAsin": extract_asin(amazon_url or "") if amazon_url else None,
+                "specs": specs if isinstance(specs, dict) else json.loads(specs or "{}"),
+                "category": category,
+            }
+
+
+def list_all_products_brief() -> list[dict[str, Any]]:
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT p.slug, p.display_name, p.subtitle, c.slug AS category_slug
+                FROM products p
+                JOIN categories c ON c.id = p.category_id
+                ORDER BY p.display_name
+                """
+            )
+            return [
+                {
+                    "slug": slug,
+                    "displayName": name,
+                    "subtitle": subtitle,
+                    "category": category,
+                }
+                for slug, name, subtitle, category in cur.fetchall()
+            ]
+
+
+def update_product_by_slug(slug: str, fields: dict[str, Any]) -> None:
+    """Update allowed columns on an existing product. specs replaces or merges via caller."""
+    allowed = {
+        "display_name": "displayName",
+        "subtitle": "subtitle",
+        "image_url": "imageUrl",
+        "amazon_url": "amazonUrl",
+        "amazon_price_label": "amazonPriceLabel",
+        "specs": "specs",
+    }
+    sets: list[str] = []
+    params: dict[str, Any] = {"slug": slug}
+
+    for col, key in allowed.items():
+        if key not in fields:
+            continue
+        val = fields[key]
+        if col == "specs":
+            val = json.dumps(val)
+        sets.append(f"{col} = %({col})s")
+        params[col] = val
+
+    if not sets:
+        raise ValueError("No fields to update")
+
+    sql = f"UPDATE products SET {', '.join(sets)} WHERE slug = %(slug)s"
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, params)
+            if cur.rowcount == 0:
+                raise ValueError(f"Product not found: {slug}")
+        conn.commit()
+
+
+def delete_product_by_slug(slug: str) -> str:
+    """Delete product row. Returns display name. Comparisons referencing it cascade-delete."""
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT display_name FROM products WHERE slug = %s", (slug,))
+            row = cur.fetchone()
+            if not row:
+                raise ValueError(f"Product not found: {slug}")
+            name = row[0]
+            cur.execute("DELETE FROM products WHERE slug = %s", (slug,))
+        conn.commit()
+    return name

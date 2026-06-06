@@ -164,8 +164,16 @@ def fetch_amazon_listing(query: str) -> dict[str, Any] | None:
     }
 
 
-def apply_listing_to_draft(data: dict[str, Any], listing: dict[str, Any]) -> dict[str, Any]:
-    for key in ("amazonAsin", "amazonUrl", "amazonPriceLabel", "imageUrl"):
+def apply_listing_to_draft(
+    data: dict[str, Any],
+    listing: dict[str, Any],
+    *,
+    only_missing: bool = False,
+) -> dict[str, Any]:
+    amazon_keys = ("amazonAsin", "amazonUrl", "amazonPriceLabel", "imageUrl")
+    for key in amazon_keys:
+        if only_missing and data.get(key):
+            continue
         if listing.get(key):
             val = listing[key]
             if key == "amazonPriceLabel":
@@ -173,11 +181,10 @@ def apply_listing_to_draft(data: dict[str, Any], listing: dict[str, Any]) -> dic
             data[key] = val
     data.pop("amazonReview", None)
     source = listing.get("amazonSource", "serpapi")
-    note = (
-        "Amazon data from SerpAPI."
-        if source == "serpapi"
-        else "Amazon data from Claude fallback (SerpAPI had no match) — verify ASIN/price on Amazon."
-    )
+    if source == "claude":
+        note = "Amazon listing fields from Claude."
+    else:
+        note = "Amazon listing fields from SerpAPI fallback — verify ASIN, price, and image on Amazon."
     existing = data.get("sourcesNote") or ""
     if note not in existing:
         data["sourcesNote"] = (existing + " " + note).strip()

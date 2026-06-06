@@ -104,5 +104,7 @@ Rules:
 - Use real Geekbench 6 numbers when known; otherwise conservative estimates in sourcesNote.
 - display widthMm/heightMm must match diagonalIn.
 - amazonPriceLabel: price ONLY like "$949.00" — no dates or notes.
+- Fill amazonAsin, amazonUrl, amazonPriceLabel, and imageUrl from your best knowledge of the exact US Amazon.com listing for this config.
+- displayName and subtitle must match the real product/config on that listing.
 - slug must not contain "-vs-".
 """

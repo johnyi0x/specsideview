@@ -10,7 +10,7 @@ const PAGE_SIZE = 20;
 
 type Props = {
   params: Promise<{ category: string }>;
-  searchParams: Promise<{ page?: string; a?: string; b?: string }>;
+  searchParams: Promise<{ page?: string; q?: string; a?: string; b?: string }>;
 };
 
 export async function generateMetadata({ params }: Props) {
@@ -24,8 +24,9 @@ export default async function CategoryComparePage({ params, searchParams }: Prop
   const { category } = await params;
   const sp = await searchParams;
   const page = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
+  const search = sp.q?.trim() ?? "";
 
-  const bundle = await listProductsPaginated(category, page, PAGE_SIZE);
+  const bundle = await listProductsPaginated(category, page, PAGE_SIZE, search);
   if (!bundle) notFound();
 
   const [resolvedA, resolvedB] = await Promise.all([
@@ -37,6 +38,11 @@ export default async function CategoryComparePage({ params, searchParams }: Prop
     a: resolvedA ? { slug: resolvedA.product.slug, name: resolvedA.product.displayName } : undefined,
     b: resolvedB ? { slug: resolvedB.product.slug, name: resolvedB.product.displayName } : undefined,
   };
+
+  const countLabel =
+    bundle.search.length > 0
+      ? `${bundle.total} match${bundle.total === 1 ? "" : "es"} for “${bundle.search}”`
+      : `${bundle.total} item${bundle.total === 1 ? "" : "s"}`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:py-16">
@@ -50,7 +56,7 @@ export default async function CategoryComparePage({ params, searchParams }: Prop
 
       <h1 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">{bundle.category.name}</h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        {bundle.total} item{bundle.total === 1 ? "" : "s"} · page {bundle.page} of {bundle.totalPages}
+        {countLabel} · page {bundle.page} of {bundle.totalPages}
       </p>
 
       <Suspense fallback={<p className="mt-10 text-sm text-[var(--color-muted)]">Loading picker…</p>}>
@@ -61,6 +67,7 @@ export default async function CategoryComparePage({ params, searchParams }: Prop
             products={bundle.products}
             page={bundle.page}
             totalPages={bundle.totalPages}
+            search={bundle.search}
             initialA={sp.a}
             initialB={sp.b}
             initialSlotLabels={initialSlotLabels}

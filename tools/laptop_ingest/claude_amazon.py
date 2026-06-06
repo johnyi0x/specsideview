@@ -1,4 +1,4 @@
-"""Claude fallback for Amazon fields when SerpAPI fails."""
+"""Claude primary source for Amazon fields; SerpAPI is fallback only."""
 
 from __future__ import annotations
 
@@ -9,6 +9,12 @@ from typing import Any
 from amazon_helpers import amazon_url_from_asin, apply_associate_tag, extract_asin, normalize_price_label
 from claude_polish import _extract_json
 
+AMAZON_KEYS = ("amazonAsin", "amazonUrl", "amazonPriceLabel", "imageUrl")
+
+
+def missing_amazon_fields(data: dict[str, Any]) -> list[str]:
+    return [k for k in AMAZON_KEYS if not data.get(k)]
+
 
 def claude_fill_amazon_fields(
     product_name: str,
@@ -16,10 +22,7 @@ def claude_fill_amazon_fields(
     subtitle: str | None = None,
     model_sku: str | None = None,
 ) -> dict[str, Any] | None:
-    """
-    Second Claude call — Amazon ASIN, URL, price, image only.
-    Used when SerpAPI returns no match.
-    """
+    """Dedicated Claude call for Amazon ASIN, URL, price, and image."""
     from anthropic import Anthropic
 
     api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -37,7 +40,7 @@ def claude_fill_amazon_fields(
 
     prompt = "\n".join(lines) + """
 
-Return ONLY valid JSON (no markdown) for the most common US Amazon.com listing for this exact laptop config:
+Return ONLY valid JSON (no markdown) for the US Amazon.com listing that EXACTLY matches this laptop name and config:
 {
   "amazonAsin": "10-character ASIN",
   "amazonUrl": "https://www.amazon.com/dp/ASIN",
@@ -46,16 +49,20 @@ Return ONLY valid JSON (no markdown) for the most common US Amazon.com listing f
 }
 
 Rules:
-- amazonPriceLabel must be ONLY a US dollar price like "$949.00" — no dates, no notes, no "verify" text.
-- imageUrl should be a direct m.media-amazon.com image URL when possible.
-- If you are not confident about the ASIN, return null for all fields rather than inventing one that 404s.
+- Pick the listing whose title matches this product/config — not accessories, renewals of wrong specs, or third-party sellers with different configs.
+- amazonPriceLabel must be ONLY a US dollar price like "$949.00" — no dates, no notes.
+- imageUrl must be the main product photo from that same listing (m.media-amazon.com preferred).
+- If you are not confident about ASIN, price, and image for this exact config, return null for all fields.
 """
 
     try:
         message = client.messages.create(
             model=model,
             max_tokens=1024,
-            system="You look up Amazon US product listings. Output JSON only. Price field is dollar amount only.",
+            system=(
+                "You look up Amazon US laptop listings. Match exact model and config. "
+                "Output JSON only. Price field is dollar amount only."
+            ),
             messages=[{"role": "user", "content": prompt}],
         )
     except Exception:

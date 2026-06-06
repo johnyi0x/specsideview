@@ -63,6 +63,12 @@ def merge_catalog_entry(entry: dict[str, Any]) -> None:
     save_catalog(products)
 
 
+def remove_catalog_entry(slug: str) -> None:
+    cat = load_catalog()
+    products = [p for p in cat.get("products", []) if p.get("slug") != slug]
+    save_catalog(products)
+
+
 def catalog_slugs() -> set[str]:
     return {p["slug"] for p in load_catalog().get("products", []) if p.get("slug")}
 

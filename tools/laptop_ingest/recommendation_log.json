@@ -26,6 +26,168 @@
       "status": "pushed",
       "recommendedAt": "2026-06-06T07:37:04.532873+00:00",
       "notes": "Refreshed XPS 13 with Intel Core Ultra Series 2 (Lunar Lake), strong battery life and premium build"
+    },
+    {
+      "displayName": "Lenovo ThinkPad X1 Carbon Gen 12",
+      "slugGuess": "lenovo-thinkpad-x1-carbon-gen-12",
+      "amazonAsin": null,
+      "modelSku": "21KC0058US",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:01:19.004048+00:00",
+      "notes": "Flagship business ultrabook with Intel Core Ultra 7, popular for productivity and enterprise comparisons"
+    },
+    {
+      "displayName": "HP Spectre x360 14 (2024)",
+      "slugGuess": "hp-spectre-x360-14-2024",
+      "amazonAsin": null,
+      "modelSku": "14-eu0097nr",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:01:19.004048+00:00",
+      "notes": "Premium 2-in-1 convertible with OLED display and Intel Core Ultra, top pick for versatile ultrabooks"
+    },
+    {
+      "displayName": "ASUS ROG Zephyrus G14 (2024)",
+      "slugGuess": "asus-rog-zephyrus-g14-2024",
+      "amazonAsin": null,
+      "modelSku": "GA403UI-XS97",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:01:19.004048+00:00",
+      "notes": "Compact gaming laptop with Ryzen 9 and RTX 4070, highly rated for portable gaming performance"
+    },
+    {
+      "displayName": "Razer Blade 16 (2024)",
+      "slugGuess": "razer-blade-16-2024",
+      "amazonAsin": null,
+      "modelSku": "RZ09-0483AEH3-R3U1",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:08:29.789692+00:00",
+      "notes": "Flagship gaming laptop with RTX 4090, Intel Core i9-14900HX, and OLED display — popular high-end option for gamers and creators"
+    },
+    {
+      "displayName": "Microsoft Surface Laptop 7 (2024)",
+      "slugGuess": "microsoft-surface-laptop-7-2024",
+      "amazonAsin": null,
+      "modelSku": "ZGP-00001",
+      "status": "recommended",
+      "recommendedAt": "2026-06-06T09:08:29.789692+00:00",
+      "notes": "Copilot+ PC with Snapdragon X Elite chip, strong battery life, and premium build — key competitor in the ARM Windows space"
+    },
+    {
+      "displayName": "Framework Laptop 13 (2024, Core Ultra)",
+      "slugGuess": "framework-laptop-13-2024-core-ultra",
+      "amazonAsin": null,
+      "modelSku": null,
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:08:29.789692+00:00",
+      "notes": "Modular, fully repairable laptop with Intel Core Ultra Series 1 — appeals to enthusiasts and right-to-repair audience"
+    },
+    {
+      "displayName": "ASUS Zenbook 14 OLED (2024, Core Ultra)",
+      "slugGuess": "asus-zenbook-14-oled-2024-core-ultra",
+      "amazonAsin": null,
+      "modelSku": "UX3405MA-PP742W",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:22:13.005967+00:00",
+      "notes": "Popular thin-and-light with OLED display and Intel Core Ultra 7, strong battery life and value pick under $1000"
+    },
+    {
+      "displayName": "Lenovo Yoga 9i 2-in-1 Gen 9 (14, 2024)",
+      "slugGuess": "lenovo-yoga-9i-2-in-1-gen-9-14-2024",
+      "amazonAsin": null,
+      "modelSku": "83AC0007US",
+      "status": "recommended",
+      "recommendedAt": "2026-06-06T09:22:13.005967+00:00",
+      "notes": "Premium convertible with OLED touchscreen, Core Ultra 7, and rotating soundbar hinge — top competitor to Spectre x360"
+    },
+    {
+      "displayName": "Acer Swift 14 AI (2024)",
+      "slugGuess": "acer-swift-14-ai-2024",
+      "amazonAsin": null,
+      "modelSku": "SF14-51T-78YQ",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:22:13.005967+00:00",
+      "notes": "Copilot+ PC with Snapdragon X Elite, lightweight design, and excellent battery life for productivity comparisons"
+    },
+    {
+      "displayName": "MacBook Pro 16 M4 Max (2024)",
+      "slugGuess": "macbook-pro-16-m4-max-2024",
+      "amazonAsin": null,
+      "modelSku": "MX313LL/A",
+      "status": "recommended",
+      "recommendedAt": "2026-06-06T09:26:46.940257+00:00",
+      "notes": "Apple's flagship pro laptop with M4 Max chip, popular for creative professionals and developers"
+    },
+    {
+      "displayName": "Dell XPS 16 9650 (2025)",
+      "slugGuess": "dell-xps-16-9650-2025",
+      "amazonAsin": null,
+      "modelSku": null,
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:26:46.940257+00:00",
+      "notes": "Premium 16-inch creator laptop with Arrow Lake HX CPUs and RTX 50-series graphics"
+    },
+    {
+      "displayName": "Lenovo Legion Pro 7i Gen 10 (2025)",
+      "slugGuess": "lenovo-legion-pro-7i-gen-10-2025",
+      "amazonAsin": null,
+      "modelSku": null,
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:26:46.940257+00:00",
+      "notes": "High-end gaming laptop with Intel Core Ultra 9 HX and RTX 5080, popular gaming pick"
+    },
+    {
+      "displayName": "Apple MacBook Air 13 M4 (2025)",
+      "slugGuess": "apple-macbook-air-13-m4-2025",
+      "amazonAsin": null,
+      "modelSku": "MW123LL/A",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:32:30.196713+00:00",
+      "notes": "Apple's latest 13-inch Air with M4 chip; top-selling thin-and-light for students and general users in 2025"
+    },
+    {
+      "displayName": "ASUS ROG Zephyrus G16 (2025)",
+      "slugGuess": "asus-rog-zephyrus-g16-2025",
+      "amazonAsin": null,
+      "modelSku": "GU605CX-XS99",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:32:30.197753+00:00",
+      "notes": "Premium 16-inch OLED gaming laptop with Intel Core Ultra 9 and RTX 5090; popular high-end gaming pick for 2025"
+    },
+    {
+      "displayName": "Lenovo ThinkPad X1 Carbon Gen 13 (2025)",
+      "slugGuess": "lenovo-thinkpad-x1-carbon-gen-13-2025",
+      "amazonAsin": null,
+      "modelSku": "21NL0013US",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:32:30.197753+00:00",
+      "notes": "Latest business ultrabook refresh with Intel Core Ultra Series 2 (Lunar Lake), strong battery life and lightweight chassis"
+    },
+    {
+      "displayName": "HP OmniBook Ultra 14 (2024)",
+      "slugGuess": "hp-omnibook-ultra-14-2024",
+      "amazonAsin": null,
+      "modelSku": "14-fd0097nr",
+      "status": "recommended",
+      "recommendedAt": "2026-06-06T09:41:47.498286+00:00",
+      "notes": "AMD Ryzen AI 9 HX 375 Copilot+ PC with strong battery life, popular premium thin-and-light alternative to MacBook Air"
+    },
+    {
+      "displayName": "Lenovo Legion 5i Gen 10 (2025)",
+      "slugGuess": "lenovo-legion-5i-gen-10-2025",
+      "amazonAsin": null,
+      "modelSku": "83LR0001US",
+      "status": "recommended",
+      "recommendedAt": "2026-06-06T09:41:47.498286+00:00",
+      "notes": "Mainstream gaming laptop with Intel Core i7-14650HX and RTX 5070, popular mid-range gaming pick for 2025"
+    },
+    {
+      "displayName": "ASUS ProArt P16 (2024)",
+      "slugGuess": "asus-proart-p16-2024",
+      "amazonAsin": null,
+      "modelSku": "H7606WI-XS99",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T09:41:47.498286+00:00",
+      "notes": "Creator-focused 16-inch laptop with Ryzen AI 9 HX 370, RTX 4070, and 4K OLED touch display"
     }
   ]
 }

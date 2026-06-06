@@ -82,10 +82,10 @@ python recommend_items.py --from-watchlist
 
 ### Script 2 — Draft (`draft_item.py`)
 
-- **Claude (Opus)** → full specs  
-- **SerpAPI** → real Amazon ASIN, affiliate URL, price, image  
+- **Claude (Opus)** → full specs, name, Amazon ASIN/URL/price/image  
+- **SerpAPI** → fallback only when Claude leaves Amazon fields empty  
 
-Requires `SERPAPI_API_KEY` in Windows env (same key as `tools/serp_research`).
+`SERPAPI_API_KEY` is optional (fallback). `ANTHROPIC_API_KEY` is required.
 
 ```powershell
 pip install google-search-results
@@ -122,7 +122,16 @@ python push_product.py drafts\macbook-air-15-m4.json --push
 ```powershell
 python sync_catalog.py          # refresh catalog.json from Neon
 python sync_catalog.py --offline
+
+python manage_product.py list
+python manage_product.py show neo-laptop-alpha
+python manage_product.py delete neo-laptop-alpha voyage-air-thirteen --yes
+python manage_product.py update dell-xps-13-9350-2025 --price "$1,599.99"
+python manage_product.py update dell-xps-13-9350-2025 --spec weightKg 1.18
+python manage_product.py apply-draft drafts/apple-macbook-air-15-m4-2025.json
 ```
+
+`manage_product.py` — delete demo/duplicate rows or fix a single field without re-pushing the whole draft.
 
 Legacy (don’t use for new work): `polish_laptop.py`, `discover_laptops.py`, `create_comparison.py`
 
