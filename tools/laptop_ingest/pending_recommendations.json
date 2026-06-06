@@ -1,23 +1,65 @@
 {
-  "generatedAt": "2026-06-06T09:52:36.799198+00:00",
+  "generatedAt": "2026-06-06T13:15:24.171653+00:00",
   "items": [
     {
-      "displayName": "Razer Blade 18 (2024)",
+      "displayName": "MacBook Pro 14 M3 (2023)",
       "amazonAsin": null,
-      "modelSku": "RZ09-0484UEH4-R3U1",
-      "notes": "Flagship 18-inch gaming laptop with Intel Core i9-14900HX and RTX 4090, 240Hz QHD+ display"
+      "modelSku": "MTL73LL/A",
+      "notes": "Previous-gen M3 MacBook Pro 14, still widely sold and a popular comparison baseline against the M4 models"
     },
     {
-      "displayName": "ASUS ROG Strix Scar 18 (2024)",
+      "displayName": "MacBook Air 13 M3 (2024)",
       "amazonAsin": null,
-      "modelSku": "G834JYR-XS97",
-      "notes": "High-end gaming laptop with Core i9-14900HX, RTX 4090, and Mini LED 240Hz display"
+      "modelSku": "MRXN3LL/A",
+      "notes": "Prior-gen M3 Air, frequently compared against the new M4 Air for value shoppers"
     },
     {
-      "displayName": "LG Gram Pro 17 (2024)",
+      "displayName": "Samsung Galaxy Book5 Pro 14 (2025)",
       "amazonAsin": null,
-      "modelSku": "17Z90SP-K.ADB9U1",
-      "notes": "Ultra-lightweight 17-inch laptop with Intel Core Ultra 7 and OLED-like display, popular for productivity"
+      "modelSku": null,
+      "notes": "Latest Galaxy Book5 Pro with Intel Core Ultra Series 2, popular thin-and-light OLED competitor"
+    },
+    {
+      "displayName": "Samsung Galaxy Book5 360 (2025)",
+      "amazonAsin": null,
+      "modelSku": null,
+      "notes": "2-in-1 convertible OLED laptop, rounds out the Galaxy Book5 lineup for comparison"
+    },
+    {
+      "displayName": "Lenovo Legion 7i Gen 9 (2024)",
+      "amazonAsin": null,
+      "modelSku": null,
+      "notes": "High-end Legion gaming laptop with RTX 4080, frequently cross-shopped with Razer Blade and ROG Strix"
+    },
+    {
+      "displayName": "Lenovo Yoga 9i 2-in-1 14 (2024)",
+      "amazonAsin": null,
+      "modelSku": null,
+      "notes": "Premium convertible with OLED and Core Ultra, popular Spectre x360 alternative"
+    },
+    {
+      "displayName": "Acer Nitro V 16 (2024)",
+      "amazonAsin": null,
+      "modelSku": null,
+      "notes": "Budget gaming laptop with RTX 4060, popular entry-level pick for spec comparisons"
+    },
+    {
+      "displayName": "HP Victus 16 (2024)",
+      "amazonAsin": null,
+      "modelSku": null,
+      "notes": "Mainstream budget gaming laptop, commonly compared to Nitro and IdeaPad Gaming"
+    },
+    {
+      "displayName": "MSI Cyborg 15 AI (2024)",
+      "amazonAsin": null,
+      "modelSku": null,
+      "notes": "Affordable gaming laptop with Core Ultra and RTX 40-series, popular budget option"
+    },
+    {
+      "displayName": "Razer Blade 14 (2024)",
+      "amazonAsin": null,
+      "modelSku": null,
+      "notes": "Compact premium gaming laptop with Ryzen 9 and RTX 4070, frequently compared to Zephyrus G14"
     }
   ]
 }

@@ -125,6 +125,26 @@ export async function listProductsPaginated(
   };
 }
 
+/** All products in a category — for slot typeahead (lightweight rows). */
+export async function listProductsInCategory(categorySlug: string): Promise<ProductListItem[]> {
+  const db = dbOrNull();
+  if (!db) return [];
+
+  const cat = await getCategoryBySlug(categorySlug);
+  if (!cat) return [];
+
+  return db
+    .select({
+      slug: products.slug,
+      displayName: products.displayName,
+      subtitle: products.subtitle,
+      imageUrl: products.imageUrl,
+    })
+    .from(products)
+    .where(eq(products.categoryId, cat.id))
+    .orderBy(asc(products.displayName));
+}
+
 /** Lightweight list for sitemap / registry sync */
 export async function listAllProductSlugs() {
   const db = dbOrNull();

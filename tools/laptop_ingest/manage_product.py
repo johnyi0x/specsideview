@@ -9,6 +9,34 @@ Manage products already in Neon — list, inspect, delete, or patch fields.
   python manage_product.py update dell-xps-13-9350-2025 --spec weightKg 1.18
   python manage_product.py update dell-xps-13-9350-2025 --spec-json '{"display":{"peakNits":500}}'
   python manage_product.py apply-draft drafts/apple-macbook-air-15-m4-2025.json
+
+  Commands
+Task	Command
+List all
+python manage_product.py list
+Full JSON
+python manage_product.py show <slug>
+Delete
+python manage_product.py delete <slug> --yes
+Fix price
+python manage_product.py update <slug> --price "$949.00"
+Fix name
+python manage_product.py update <slug> --name "New Name"
+Fix subtitle
+python manage_product.py update <slug> --subtitle "..."
+Fix Amazon URL
+python manage_product.py update <slug> --amazon-url "https://..."
+Fix image
+python manage_product.py update <slug> --image-url "https://..."
+Fix one spec
+python manage_product.py update <slug> --spec weightKg 1.18
+Fix nested spec
+python manage_product.py update <slug> --spec display.peakNits 500
+Fix specs JSON
+python manage_product.py update <slug> --spec-json '{"cpu":{"geekbenchSingle":3751}}'
+Apply whole draft
+python manage_product.py apply-draft drafts/<slug>.json
+
 """
 
 from __future__ import annotations

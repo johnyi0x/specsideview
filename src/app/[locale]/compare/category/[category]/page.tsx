@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ComparePicker } from "@/components/compare/compare-picker";
-import { listProductsPaginated, getProductBySlug } from "@/lib/data";
+import { listProductsPaginated, listProductsInCategory, getProductBySlug } from "@/lib/data";
 import { LocaleLink } from "@/components/locale-link";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +28,8 @@ export default async function CategoryComparePage({ params, searchParams }: Prop
 
   const bundle = await listProductsPaginated(category, page, PAGE_SIZE, search);
   if (!bundle) notFound();
+
+  const allProducts = await listProductsInCategory(category);
 
   const [resolvedA, resolvedB] = await Promise.all([
     sp.a ? getProductBySlug(sp.a) : Promise.resolve(null),
@@ -65,6 +67,7 @@ export default async function CategoryComparePage({ params, searchParams }: Prop
             categorySlug={category}
             categoryName={bundle.category.name}
             products={bundle.products}
+            allProducts={allProducts}
             page={bundle.page}
             totalPages={bundle.totalPages}
             search={bundle.search}
