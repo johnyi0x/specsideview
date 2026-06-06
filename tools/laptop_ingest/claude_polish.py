@@ -9,7 +9,7 @@ from typing import Any
 
 from anthropic import Anthropic
 
-from catalog import catalog_summary_for_claude, find_catalog_duplicate
+from registry import catalog_summary_for_claude, find_catalog_duplicate
 from product_schema import LAPTOP_JSON_SCHEMA_HINT, slugify
 
 

@@ -6,6 +6,7 @@ import { RamStorageMeters } from "@/components/compare/ram-storage-meters";
 import { ScreenSilhouettes } from "@/components/compare/screen-silhouettes";
 import { WeightCompare } from "@/components/compare/weight-compare";
 import { ComparePairGrid } from "@/components/compare/compare-pair-grid";
+import { SpecComparisonTable } from "@/components/compare/spec-comparison-table";
 import { parseLaptopSpecs } from "@/lib/spec-types";
 import { LocaleLink } from "@/components/locale-link";
 import { motion } from "framer-motion";
@@ -205,6 +206,8 @@ export function CompareView({ payload }: { payload: ComparePayload }) {
           <RamStorageMeters productA={productA} productB={productB} specsA={specsA} specsB={specsB} />
         </div>
       </div>
+
+      <SpecComparisonTable productA={productA} productB={productB} specsA={specsA} specsB={specsB} />
     </div>
   );
 }

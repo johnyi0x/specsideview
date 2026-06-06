@@ -41,7 +41,9 @@ Return ONLY valid JSON (no markdown) with this shape:
 {
   "slug": "kebab-case-url-slug",
   "displayName": "Short product name",
-  "subtitle": "One-line positioning (config summary)",
+  "subtitle": "One-line config summary",
+  "amazonAsin": null or "B0XXXXXXXXX",
+  "modelSku": null or "manufacturer SKU",
   "imageUrl": null or "https://...",
   "amazonUrl": null or "https://www.amazon.com/dp/ASIN",
   "amazonPriceLabel": null or "$1,299 (verify on Amazon before publish)",
@@ -58,17 +60,49 @@ Return ONLY valid JSON (no markdown) with this shape:
       "heightMm": number,
       "resolution": "2880x1800",
       "refreshHz": number,
-      "peakNits": number
+      "peakNits": number,
+      "panelType": "IPS/OLED/Mini-LED"
     },
     "weightKg": number,
-    "batteryWh": number,
-    "highlights": ["bullet 1", "bullet 2", "bullet 3"]
+    "battery": {
+      "capacityWh": number,
+      "claimedLifeHours": "up to 18 h",
+      "chargerWatt": number
+    },
+    "connectivity": {
+      "wifi": "Wi-Fi 6E (802.11ax)",
+      "bluetooth": "5.3",
+      "fingerprint": "Yes / Optional / No",
+      "infrared": "No",
+      "webcam": "Above display / 1080p IR",
+      "webcamResolution": "1920x1080"
+    },
+    "ports": {
+      "usbA": "No / 1x USB 3.2",
+      "usbC": "2x USB4",
+      "thunderbolt": "2x Thunderbolt 4 / No",
+      "hdmi": "1x HDMI 2.1 / No",
+      "displayPort": "No",
+      "vga": "No",
+      "audioJack": "Yes / No",
+      "ethernet": "No / RJ45",
+      "sdCard": "microSD / No",
+      "proprietaryCharging": "No"
+    },
+    "input": {
+      "keyboard": "Backlit, 1.5 mm travel",
+      "touchpad": "Glass, precision",
+      "touchpadWidthMm": number or null,
+      "touchpadHeightMm": number or null
+    },
+    "highlights": ["bullet 1", "bullet 2"]
   },
-  "sourcesNote": "Brief note on where specs/benchmarks came from; flag estimates."
+  "sourcesNote": "Where specs came from; flag estimates."
 }
 Rules:
-- Use real-ish Geekbench 6 single/multi when known; otherwise conservative estimates and say so in sourcesNote.
-- display widthMm/heightMm must match diagonalIn (16:10 unless stated).
-- Omit fields you cannot support; never invent ASIN — leave amazonUrl null if unknown.
-- slug must be unique, lowercase, hyphenated.
+- Fill connectivity, ports, and input like Nanoreview comparison tables when known.
+- Use real Geekbench 6 numbers when known; otherwise conservative estimates in sourcesNote.
+- display widthMm/heightMm must match diagonalIn.
+- Never invent ASIN — leave amazonUrl null if unknown.
+- slug must not contain "-vs-".
 """

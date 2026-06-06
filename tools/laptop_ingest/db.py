@@ -8,48 +8,67 @@ from typing import Any
 
 import psycopg
 
-from catalog import catalog_slugs, merge_catalog_entry
+from amazon_helpers import extract_asin
+from registry import catalog_slugs, merge_catalog_entry
+
+
+def normalize_database_url(url: str) -> str:
+    """Neon requires SSL; ensure sslmode is set."""
+    if "sslmode=" not in url:
+        sep = "&" if "?" in url else "?"
+        url = f"{url}{sep}sslmode=require"
+    return url
 
 
 def get_database_url() -> str | None:
-    return os.environ.get("DATABASE_URL") or None
+    raw = os.environ.get("DATABASE_URL") or None
+    return normalize_database_url(raw) if raw else None
+
+
+def _connect():
+    url = get_database_url()
+    if not url:
+        raise RuntimeError("DATABASE_URL is not set")
+    return psycopg.connect(url, connect_timeout=15)
 
 
 def fetch_all_products_for_catalog() -> list[dict[str, Any]]:
-    url = get_database_url()
-    if not url:
-        raise RuntimeError("DATABASE_URL is not set — cannot sync catalog")
-    with psycopg.connect(url) as conn:
+    with _connect() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT p.slug, p.display_name, p.subtitle, c.slug AS category_slug
+                SELECT p.slug, p.display_name, p.subtitle, c.slug AS category_slug,
+                       p.amazon_url
                 FROM products p
                 JOIN categories c ON c.id = p.category_id
                 ORDER BY p.display_name
                 """
             )
-            return [
-                {
-                    "slug": row[0],
-                    "displayName": row[1],
-                    "subtitle": row[2],
-                    "category": row[3],
-                }
-                for row in cur.fetchall()
-            ]
+            rows = []
+            for slug, name, subtitle, category, amazon_url in cur.fetchall():
+                rows.append(
+                    {
+                        "slug": slug,
+                        "displayName": name,
+                        "subtitle": subtitle,
+                        "category": category,
+                        "amazonAsin": extract_asin(amazon_url or "") if amazon_url else None,
+                        "modelSku": None,
+                    }
+                )
+            return rows
 
 
 def list_existing_slugs() -> set[str]:
     """Union of Neon slugs (when online) and local catalog.json."""
     slugs = catalog_slugs()
-    url = get_database_url()
-    if not url:
-        return slugs
-    with psycopg.connect(url) as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT slug FROM products")
-            slugs |= {row[0] for row in cur.fetchall()}
+    try:
+        with _connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT slug FROM products")
+                slugs |= {row[0] for row in cur.fetchall()}
+    except Exception:
+        pass
     return slugs
 
 
@@ -81,10 +100,7 @@ def insert_product_draft(data: dict[str, Any], *, dry_run: bool = False) -> str:
     if dry_run:
         return f"-- Would insert product: {slug}\n" + _format_insert_sql(params)
 
-    url = get_database_url()
-    if not url:
-        raise RuntimeError("DATABASE_URL is not set")
-    with psycopg.connect(url) as conn:
+    with _connect() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, params)
             if cur.rowcount == 0:
@@ -97,6 +113,8 @@ def insert_product_draft(data: dict[str, Any], *, dry_run: bool = False) -> str:
             "displayName": data["displayName"],
             "subtitle": data.get("subtitle"),
             "category": "laptops",
+            "amazonAsin": data.get("amazonAsin") or extract_asin(data.get("amazonUrl") or ""),
+            "modelSku": data.get("modelSku"),
         }
     )
     return f"Inserted product: {slug} (catalog.json updated)"
@@ -106,12 +124,12 @@ def _format_insert_sql(params: dict[str, Any]) -> str:
     specs_escaped = json.dumps(params["specs"]).replace("'", "''")
     parts = [
         f"-- slug: {params['slug']}",
-        f"INSERT INTO products (category_id, slug, display_name, subtitle, image_url, amazon_url, amazon_price_label, specs)",
+        "INSERT INTO products (category_id, slug, display_name, subtitle, image_url, amazon_url, amazon_price_label, specs)",
         f"SELECT c.id, '{params['slug']}', '{params['display_name']}',",
         f"  {_sql_literal(params['subtitle'])}, {_sql_literal(params['image_url'])},",
         f"  {_sql_literal(params['amazon_url'])}, {_sql_literal(params['amazon_price_label'])},",
         f"  '{specs_escaped}'::jsonb",
-        f"FROM categories c WHERE c.slug = 'laptops';",
+        "FROM categories c WHERE c.slug = 'laptops';",
     ]
     return "\n".join(parts)
 

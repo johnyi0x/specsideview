@@ -1,32 +1,24 @@
 /**
  * Expected shape inside `products.specs` (JSON). All fields optional —
- * charts render only what you provide after manual QA.
+ * charts and tables render only what you provide after manual QA.
  */
 export type LaptopSpecs = {
   cpu?: {
     label: string;
-    /**
-     * @deprecated Prefer geekbenchMulti; still used as Geekbench 6 multi-core fallback
-     * when geekbenchMulti is omitted.
-     */
     benchmarkScore?: number;
-    /** Geekbench 6 CPU single-core (or equivalent you normalize to that scale). */
     geekbenchSingle?: number;
-    /** Geekbench 6 CPU multi-core. */
     geekbenchMulti?: number;
   };
   gpu?: {
     label: string;
     benchmarkScore?: number;
   };
-  /** AI / ML benchmark (e.g. Geekbench ML, UL Procyon AI, or your own index). */
   ai?: {
     label?: string;
     benchmarkScore?: number;
   };
   ramGb?: number;
   storageGb?: number;
-  /** Physical panel size drives the on-screen silhouette comparison. */
   display?: {
     label?: string;
     diagonalIn?: number;
@@ -35,10 +27,42 @@ export type LaptopSpecs = {
     resolution?: string;
     refreshHz?: number;
     peakNits?: number;
+    panelType?: string;
   };
   weightKg?: number;
+  /** @deprecated prefer specs.battery.capacityWh */
   batteryWh?: number;
-  /** Freeform bullet strings for narrative callouts. */
+  battery?: {
+    capacityWh?: number;
+    claimedLifeHours?: string;
+    chargerWatt?: number;
+  };
+  connectivity?: {
+    wifi?: string;
+    bluetooth?: string;
+    fingerprint?: string;
+    infrared?: string;
+    webcam?: string;
+    webcamResolution?: string;
+  };
+  ports?: {
+    usbA?: string;
+    usbC?: string;
+    thunderbolt?: string;
+    hdmi?: string;
+    displayPort?: string;
+    vga?: string;
+    audioJack?: string;
+    ethernet?: string;
+    sdCard?: string;
+    proprietaryCharging?: string;
+  };
+  input?: {
+    keyboard?: string;
+    touchpad?: string;
+    touchpadWidthMm?: number;
+    touchpadHeightMm?: number;
+  };
   highlights?: string[];
 };
 
@@ -46,7 +70,6 @@ export function parseLaptopSpecs(raw: Record<string, unknown>): LaptopSpecs {
   return raw as LaptopSpecs;
 }
 
-/** Multi-core value for charts: explicit Geekbench 6 multi, else legacy benchmarkScore. */
 export function cpuMultiScore(specs: LaptopSpecs): number | undefined {
   const m = specs.cpu?.geekbenchMulti;
   if (m != null) return m;
@@ -55,4 +78,14 @@ export function cpuMultiScore(specs: LaptopSpecs): number | undefined {
 
 export function cpuSingleScore(specs: LaptopSpecs): number | undefined {
   return specs.cpu?.geekbenchSingle;
+}
+
+export function batteryWh(specs: LaptopSpecs): number | undefined {
+  return specs.battery?.capacityWh ?? specs.batteryWh;
+}
+
+/** Format a spec value for table cells; returns em dash when missing. */
+export function fmtSpec(value: string | number | null | undefined): string {
+  if (value == null || value === "") return "—";
+  return String(value);
 }

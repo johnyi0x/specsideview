@@ -18,7 +18,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from claude_polish import polish_laptop
-from catalog import catalog_slugs, find_catalog_duplicate
+from registry import catalog_slugs, find_catalog_duplicate
 from db import list_existing_slugs
 from product_schema import slugify, validate_draft
 

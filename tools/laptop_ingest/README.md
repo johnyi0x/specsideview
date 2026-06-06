@@ -1,13 +1,29 @@
-# Laptop ingest (local only)
+# Laptop ingest — 3-script workflow
 
-Semi-automatic pipeline for **laptops** — separate from the Next.js app. Uses **Claude** to draft normalized JSON you review before Neon insert.
+Semi-automatic pipeline for **laptops**. Separate from the Next.js app.
 
-## Architecture (important)
+## Architecture (scalable + SEO-safe)
 
-- **Database stores individual products only** — one row per laptop.
-- **Compare pages are generated on the fly** at `/compare/{slug-a}-vs-{slug-b}` (versus/nanoreview style; slugs sorted alphabetically for one canonical URL per pair).
-- You do **not** need `create_comparison.py` or rows in the `comparisons` table for new pairs. That table is legacy for old URLs only.
-- **`catalog.json`** is a local registry synced from Neon. Claude reads it so new drafts avoid duplicate slugs/names — run `sync_catalog.py` after pulling prod data or on a new machine.
+| Layer | What it stores |
+|-------|----------------|
+| **Neon `products`** | One row per laptop — the only thing you add |
+| **Neon `categories`** | `laptops` (more later) |
+| **`comparisons` table** | Legacy — ignore for new work |
+| **Compare pages** | Built at runtime: `/en/compare/{a}-vs-{b}` |
+| **Local files** | Duplicate guard + recommendation history |
+
+**SEO:** 1,000 laptops ≈ 499,500 possible compare URLs, **zero** extra DB rows per pair.
+
+### Local files (in this folder)
+
+| File | Purpose |
+|------|---------|
+| `catalog.json` | Mirror of Neon products (slug, ASIN, SKU) — synced via `sync_catalog.py` |
+| `recommendation_log.json` | Every item Script 1 ever suggested — **never re-recommended** |
+| `pending_recommendations.json` | Latest batch from Script 1 — pick from here for Script 2 |
+| `drafts/*.json` | Reviewed-by-you drafts before push |
+
+---
 
 ## Setup (Windows)
 
@@ -19,65 +35,94 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-Set in `.env` or Windows user environment:
+Edit `.env`:
 
-- `ANTHROPIC_API_KEY` — required
-- `DATABASE_URL` — optional until `--push` / `sync_catalog.py` (same Neon string as Vercel)
-
-## Workflow
-
-### 0. Sync local catalog (recommended first)
-
-```powershell
-python sync_catalog.py
+```
+ANTHROPIC_API_KEY=sk-ant-...
+DATABASE_URL=postgresql://...   # Neon **pooled** connection string
+AMAZON_ASSOCIATE_TAG=specsideview-20
 ```
 
-Writes `catalog.json` from Neon. Claude and `polish_laptop.py` use this to block duplicates even when you are offline from the DB.
+### Amazon affiliate tag
 
-### 1. Draft one laptop (Claude)
+- Put **`specsideview-20` in `.env`** as `AMAZON_ASSOCIATE_TAG` — Script 2 auto-appends `?tag=specsideview-20` to draft URLs.
+- **Each product’s full Special Link** is stored in Neon `amazon_url` after you review (can include the tag already).
+- The **website does not need** the tag in Vercel env — it just links to whatever `amazon_url` is in the DB.
 
-```powershell
-python polish_laptop.py "MacBook Pro 16 M4 Max 2024"
-python polish_laptop.py "Dell XPS 15 9530" --amazon "https://www.amazon.com/dp/B0XXXX"
-```
+### Fix Neon connection errors
 
-Output: `drafts/<slug>.json` — **open and edit** (benchmarks, Amazon Special Link, price, image URL).
+If `sync_catalog.py` fails:
 
-### 2. Push to Neon (after review)
+1. Neon dashboard → **Connect** → copy **Pooled connection** string (not unpooled).
+2. Paste into `tools/laptop_ingest/.env`.
+3. Or skip DB for now: `python sync_catalog.py --offline`  
+   Scripts 1 & 2 still work using local `catalog.json` + `recommendation_log.json`.
 
-```powershell
-python push_product.py drafts\macbook-pro-16-m4-max.json --dry-run
-python push_product.py drafts\macbook-pro-16-m4-max.json --push
-```
+---
 
-Duplicate slugs are rejected (catalog + Neon). After push, `catalog.json` is updated automatically.
+## The 3 scripts
 
-### 3. Live on site
+### Script 1 — Recommend (`recommend_items.py`)
 
-- Hub: `https://specsideview.com/compare`
-- Pick category → pick two items → **Compare**
-- Or direct URL: `https://specsideview.com/compare/neo-laptop-alpha-vs-voyage-air-thirteen`
+Suggests a **few new laptops** Claude thinks you should add. Excludes:
 
-Every new product instantly combines with every other product — no extra DB work per pair.
-
-### 4. Batch / weekly new models
-
-Edit `watchlist.txt`, then:
+- Everything in `catalog.json` (DB)
+- Everything in `recommendation_log.json` (past suggestions)
+- Everything in `drafts/`
 
 ```powershell
-python discover_laptops.py --weekly --limit 3
+python recommend_items.py
+python recommend_items.py --limit 5
+python recommend_items.py --from-watchlist
 ```
 
-Skips products already in `catalog.json`, Neon, or `drafts/`.
+**Output:** `pending_recommendations.json` + log entry (won’t suggest again).
 
-## Legacy: `create_comparison.py`
+---
 
-Optional — only needed if you still use old single-slug URLs (`/compare/neobook-alpha-16-vs-voyage-air-13`). New work should **not** use this script.
+### Script 2 — Draft (`draft_item.py`)
 
-## Still manual (on purpose)
+Claude fills **full spec JSON** for **one** item you choose.
 
-- Amazon **Associate-tagged** Special Links
-- Verifying **price** before publish
-- Final benchmark sanity check (Claude may estimate — read `sourcesNote` in each draft)
+```powershell
+python draft_item.py --name "MacBook Air 15 M4 2025"
+python draft_item.py --asin B0XXXXXXXXX
+python draft_item.py --amazon "https://www.amazon.com/dp/B0XXXXXXXXX"
+python draft_item.py --sku "MC123LL/A" --name "MacBook Pro 14 M4"
+```
+
+**Output:** `drafts/<slug>.json` — **open and edit** (price, Amazon link, benchmarks, ports, etc.).
+
+---
+
+### Script 3 — Push (`push_product.py`)
+
+After manual review:
+
+```powershell
+python push_product.py drafts\macbook-air-15-m4.json --dry-run
+python push_product.py drafts\macbook-air-15-m4.json --push
+```
+
+**Output:** One row in Neon. Live on site immediately. No redeploy.
+
+---
+
+## After push — on the website
+
+- Picker: `https://specsideview.com/en/compare/category/laptops`
+- Compare: pick any two → charts + **full spec table** (connectivity, ports, keyboard, battery, …)
+- Direct URL: `/en/compare/slug-a-vs-slug-b`
+
+---
+
+## Optional helpers
+
+```powershell
+python sync_catalog.py          # refresh catalog.json from Neon
+python sync_catalog.py --offline
+```
+
+Legacy (don’t use for new work): `polish_laptop.py`, `discover_laptops.py`, `create_comparison.py`
 
 Never commit `.env` or API keys.

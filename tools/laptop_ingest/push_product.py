@@ -17,6 +17,8 @@ from dotenv import load_dotenv
 
 from db import insert_product_draft
 from product_schema import validate_draft
+from registry import update_recommendation_status
+from amazon_helpers import extract_asin
 
 ROOT = Path(__file__).resolve().parent
 
@@ -42,7 +44,13 @@ def main() -> None:
     result = insert_product_draft(data, dry_run=args.dry_run)
     print(result)
     if args.push:
-        print("Done. Compare pages are built automatically at /compare/<slug-a>/<slug-b> — no comparison row needed.")
+        update_recommendation_status(
+            display_name=data.get("displayName"),
+            slug=data["slug"],
+            asin=data.get("amazonAsin") or extract_asin(data.get("amazonUrl") or ""),
+            status="pushed",
+        )
+        print("Done. Live at /en/compare/<slug-a>-vs-<slug-b> — no comparison row needed.")
 
 
 if __name__ == "__main__":
