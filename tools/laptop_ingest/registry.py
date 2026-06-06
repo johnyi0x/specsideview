@@ -25,7 +25,8 @@ def _now() -> str:
 def load_json(path: Path, default: dict[str, Any]) -> dict[str, Any]:
     if not path.exists():
         return default
-    return json.loads(path.read_text(encoding="utf-8"))
+    # utf-8-sig strips BOM from PowerShell-written files on Windows
+    return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
 def save_json(path: Path, data: dict[str, Any]) -> None:
@@ -203,3 +204,14 @@ def save_pending_recommendations(items: list[dict[str, Any]]) -> None:
 
 def load_pending_recommendations() -> list[dict[str, Any]]:
     return load_json(PENDING_PATH, {"items": []}).get("items", [])
+
+
+def lookup_recommendation(display_name: str) -> dict[str, Any] | None:
+    """Find ASIN/SKU from pending list or recommendation log by product name."""
+    norm = " ".join(display_name.lower().split())
+    for source in (load_pending_recommendations(), load_recommendation_log().get("items", [])):
+        for item in source:
+            item_norm = " ".join(item.get("displayName", "").lower().split())
+            if item_norm == norm:
+                return item
+    return None

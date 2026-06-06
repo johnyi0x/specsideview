@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import type { ProductListItem } from "@/lib/data";
 import { comparePairPath } from "@/lib/compare-url";
 import { defaultLocale, localizedPath, type Locale } from "@/lib/i18n";
+import { ProductImage } from "@/components/product-image";
 
 type Props = {
   categorySlug: string;
@@ -125,10 +126,9 @@ export function ComparePicker({
                     onClick={() => addToSlot(p.slug)}
                     className="flex w-full items-center gap-3 p-3 text-left transition hover:bg-[color-mix(in_oklch,var(--color-accent)_6%,transparent)] disabled:cursor-default disabled:opacity-60 sm:gap-4 sm:p-4"
                   >
-                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[color-mix(in_oklch,var(--color-card-border)_55%,transparent)] sm:h-16 sm:w-16">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[color-mix(in_oklch,var(--color-card-border)_55%,transparent)] sm:h-16 sm:w-16">
                       {p.imageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.imageUrl} alt="" className="h-full w-full object-cover" />
+                        <ProductImage src={p.imageUrl} alt={p.displayName} />
                       ) : null}
                     </div>
                     <div className="min-w-0 flex-1">

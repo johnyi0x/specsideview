@@ -82,16 +82,17 @@ python recommend_items.py --from-watchlist
 
 ### Script 2 — Draft (`draft_item.py`)
 
-Claude fills **full spec JSON** for **one** item you choose.
+- **Claude (Opus)** → full specs  
+- **SerpAPI** → real Amazon ASIN, affiliate URL, price, image  
+
+Requires `SERPAPI_API_KEY` in Windows env (same key as `tools/serp_research`).
 
 ```powershell
-python draft_item.py --name "MacBook Air 15 M4 2025"
-python draft_item.py --asin B0XXXXXXXXX
-python draft_item.py --amazon "https://www.amazon.com/dp/B0XXXXXXXXX"
-python draft_item.py --sku "MC123LL/A" --name "MacBook Pro 14 M4"
+pip install google-search-results
+python draft_item.py --from-pending 1
 ```
 
-**Output:** `drafts/<slug>.json` — **open and edit** (price, Amazon link, benchmarks, ports, etc.).
+You **review** the JSON for accuracy — not hunt for null fields. Then push.
 
 ---
 

@@ -8,6 +8,45 @@ import { ChartDiffAside } from "@/components/compare/chart-diff-aside";
 import { DiffAreaBlurb } from "@/components/compare/diff-rich";
 import { motion } from "framer-motion";
 
+function PanelColumn({
+  productName,
+  label,
+  width,
+  height,
+  colorVar,
+  delay,
+}: {
+  productName: string;
+  label: string;
+  width: number;
+  height: number;
+  colorVar: string;
+  delay: number;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <p className="flex min-h-[2.75rem] max-w-[11rem] items-end justify-center text-center text-xs font-medium uppercase leading-snug tracking-wider text-[var(--color-muted)] line-clamp-2">
+        {productName}
+      </p>
+      <div className="flex h-44 w-full items-end justify-center">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 120, damping: 18, delay }}
+          className="rounded-xl border-2"
+          style={{
+            width,
+            height,
+            borderColor: colorVar,
+            boxShadow: `0 0 48px color-mix(in oklch, ${colorVar} 40%, transparent)`,
+          }}
+        />
+      </div>
+      <p className="max-w-[12rem] text-center text-xs text-[var(--color-muted)]">{label}</p>
+    </div>
+  );
+}
+
 export function ScreenSilhouettes({
   productA,
   productB,
@@ -25,14 +64,12 @@ export function ScreenSilhouettes({
 
   const maxMm = Math.max(geoA.widthMm, geoA.heightMm, geoB.widthMm, geoB.heightMm);
   const box = 160;
+  const scale = box / maxMm;
 
-  const scaleA = box / maxMm;
-  const scaleB = box / maxMm;
-
-  const wa = geoA.widthMm * scaleA;
-  const ha = geoA.heightMm * scaleA;
-  const wb = geoB.widthMm * scaleB;
-  const hb = geoB.heightMm * scaleB;
+  const wa = geoA.widthMm * scale;
+  const ha = geoA.heightMm * scale;
+  const wb = geoB.widthMm * scale;
+  const hb = geoB.heightMm * scale;
 
   const labelA = specsA.display?.label ?? `${geoA.widthMm.toFixed(0)}×${geoA.heightMm.toFixed(0)} mm panel`;
   const labelB = specsB.display?.label ?? `${geoB.widthMm.toFixed(0)}×${geoB.heightMm.toFixed(0)} mm panel`;
@@ -52,47 +89,23 @@ export function ScreenSilhouettes({
         Rectangles are drawn to the same scale using your stored panel width and height in millimeters (or a 16∶10
         estimate from diagonal inches when width/height are omitted).
       </p>
-      <div className="mt-8 flex flex-wrap items-end justify-center gap-10 md:gap-16">
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-center text-xs font-medium uppercase tracking-wider text-[var(--color-muted)]">
-            {productA.displayName}
-          </span>
-          <div className="flex h-44 items-end justify-center">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 120, damping: 18 }}
-              className="rounded-xl border-2"
-              style={{
-                width: wa,
-                height: ha,
-                borderColor: "var(--chart-series-a)",
-                boxShadow: "0 0 48px color-mix(in oklch, var(--chart-series-a) 40%, transparent)",
-              }}
-            />
-          </div>
-          <p className="max-w-[12rem] text-center text-xs text-[var(--color-muted)]">{labelA}</p>
-        </div>
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-center text-xs font-medium uppercase tracking-wider text-[var(--color-muted)]">
-            {productB.displayName}
-          </span>
-          <div className="flex h-44 items-end justify-center">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 120, damping: 18, delay: 0.06 }}
-              className="rounded-xl border-2"
-              style={{
-                width: wb,
-                height: hb,
-                borderColor: "var(--chart-series-b)",
-                boxShadow: "0 0 48px color-mix(in oklch, var(--chart-series-b) 40%, transparent)",
-              }}
-            />
-          </div>
-          <p className="max-w-[12rem] text-center text-xs text-[var(--color-muted)]">{labelB}</p>
-        </div>
+      <div className="mx-auto mt-8 grid max-w-lg grid-cols-2 gap-8 md:gap-12">
+        <PanelColumn
+          productName={productA.displayName}
+          label={labelA}
+          width={wa}
+          height={ha}
+          colorVar="var(--chart-series-a)"
+          delay={0}
+        />
+        <PanelColumn
+          productName={productB.displayName}
+          label={labelB}
+          width={wb}
+          height={hb}
+          colorVar="var(--chart-series-b)"
+          delay={0.06}
+        />
       </div>
 
       <ChartDiffAside title="Relative gap">

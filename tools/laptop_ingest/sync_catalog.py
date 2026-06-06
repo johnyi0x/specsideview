@@ -42,10 +42,11 @@ def main() -> None:
     except Exception as exc:
         print(f"Could not connect to Neon: {exc}", file=sys.stderr)
         print("\nTips:", file=sys.stderr)
-        print("  1. Copy DATABASE_URL from Neon dashboard → Connection string → Pooled connection", file=sys.stderr)
-        print("  2. Paste into tools/laptop_ingest/.env (not the unpooled URL if pooler fails)", file=sys.stderr)
-        print("  3. Or run: python sync_catalog.py --offline", file=sys.stderr)
-        print("  4. Script 1/2 still work using local catalog.json + recommendation_log.json", file=sys.stderr)
+        print("  1. Run: python check_setup.py", file=sys.stderr)
+        print("  2. Neon dashboard → Connect → try **Direct** connection string as DATABASE_URL", file=sys.stderr)
+        print("  3. Or set DATABASE_URL_UNPOOLED (direct) alongside pooled DATABASE_URL", file=sys.stderr)
+        print("  4. Windows firewall/VPN often blocks port 5432 — try phone hotspot test", file=sys.stderr)
+        print("  5. Or: python sync_catalog.py --offline  (Scripts 1 & 2 still work)", file=sys.stderr)
         sys.exit(1)
 
     print(f"Found {len(products)} product(s) in Neon.")

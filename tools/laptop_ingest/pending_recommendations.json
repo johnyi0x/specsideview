@@ -1,4 +1,23 @@
 {
-  "generatedAt": null,
-  "items": []
+  "generatedAt": "2026-06-06T07:37:04.538368+00:00",
+  "items": [
+    {
+      "displayName": "Apple MacBook Air 15 M4 2025",
+      "amazonAsin": null,
+      "modelSku": "MC8K4LL/A",
+      "notes": "Latest M4 chip, popular thin-and-light with excellent battery life and 15-inch Liquid Retina display"
+    },
+    {
+      "displayName": "Apple MacBook Pro 14 M4 Pro 2024",
+      "amazonAsin": null,
+      "modelSku": "MX2H3LL/A",
+      "notes": "Pro-tier laptop with M4 Pro chip, mini-LED ProMotion display, popular for creators and developers"
+    },
+    {
+      "displayName": "Dell XPS 13 9350 (2025)",
+      "amazonAsin": null,
+      "modelSku": "XPS9350",
+      "notes": "Refreshed XPS 13 with Intel Core Ultra Series 2 (Lunar Lake), strong battery life and premium build"
+    }
+  ]
 }

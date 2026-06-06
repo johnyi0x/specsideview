@@ -86,16 +86,15 @@ DO NOT suggest anything matching excluded lists below or already in the database
 Return ONLY a JSON array (no markdown) like:
 [
   {{"displayName": "MacBook Air 15 M4 2025", "amazonAsin": null, "modelSku": null, "notes": "why this model"}},
-  {{"displayName": "...", "amazonAsin": "B0XXXXXXXXX", "modelSku": "optional OEM sku", "notes": "..."}}
+  {{"displayName": "...", "amazonAsin": null, "modelSku": "optional OEM sku", "notes": "..."}}
 ]
-Use amazonAsin when you know a common US listing ASIN; otherwise null. modelSku optional."""
+IMPORTANT: always set amazonAsin to null. Do NOT guess ASINs — they are often wrong and break Amazon links."""
 
     client = Anthropic(api_key=api_key)
-    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7")
     msg = client.messages.create(
         model=model,
         max_tokens=2048,
-        temperature=0.3,
         system="You recommend electronics for a comparison database. Output valid JSON array only.",
         messages=[{"role": "user", "content": prompt}],
     )
@@ -145,6 +144,10 @@ def main() -> None:
         print("Error: Claude did not return a JSON array", file=sys.stderr)
         sys.exit(1)
 
+    # Never trust ASINs from Claude — they frequently 404 on Amazon
+    for item in raw_items:
+        item["amazonAsin"] = None
+
     items = filter_new(raw_items)[: args.limit]
     if not items:
         print("No new recommendations — everything suggested was already known. Try editing watchlist.txt.")
@@ -157,13 +160,12 @@ def main() -> None:
     print(f"  {PENDING_PATH}")
     print(f"  recommendation_log.json (won't re-suggest these)\n")
     for i, item in enumerate(items, 1):
-        asin = item.get("amazonAsin") or "—"
-        print(f"  {i}. {item['displayName']}  (ASIN: {asin})")
+        print(f"  {i}. {item['displayName']}")
         if item.get("notes"):
             print(f"     {item['notes']}")
-    print("\nNext — Script 2 (draft full specs with Claude):")
-    print('  python draft_item.py --name "MacBook Air 15 M4 2025"')
-    print("  python draft_item.py --asin B0XXXXXXXXX")
+    print("\nNext — Script 2 (specs only; Amazon link you add manually after):")
+    print("  python draft_item.py --from-pending 1")
+    print('  python apply_amazon_link.py drafts/<slug>.json --url "YOUR_SITESTRIPE_LINK" --price "$1,299"')
 
 
 if __name__ == "__main__":

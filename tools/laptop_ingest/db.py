@@ -25,11 +25,42 @@ def get_database_url() -> str | None:
     return normalize_database_url(raw) if raw else None
 
 
+def connection_url_candidates() -> list[str]:
+    """Pooled first, then direct (non-pooler) — helps when pooler times out on some networks."""
+    urls: list[str] = []
+    primary = get_database_url()
+    if primary:
+        urls.append(primary)
+
+    unpooled = os.environ.get("DATABASE_URL_UNPOOLED", "").strip()
+    if unpooled:
+        urls.append(normalize_database_url(unpooled))
+    elif primary and "-pooler" in primary:
+        urls.append(normalize_database_url(primary.replace("-pooler", "")))
+
+    # dedupe preserving order
+    seen: set[str] = set()
+    out: list[str] = []
+    for u in urls:
+        if u not in seen:
+            seen.add(u)
+            out.append(u)
+    return out
+
+
 def _connect():
-    url = get_database_url()
-    if not url:
+    urls = connection_url_candidates()
+    if not urls:
         raise RuntimeError("DATABASE_URL is not set")
-    return psycopg.connect(url, connect_timeout=15)
+
+    last: Exception | None = None
+    for url in urls:
+        try:
+            return psycopg.connect(url, connect_timeout=30)
+        except Exception as exc:
+            last = exc
+    assert last is not None
+    raise last
 
 
 def fetch_all_products_for_catalog() -> list[dict[str, Any]]:

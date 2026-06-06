@@ -42,11 +42,11 @@ Return ONLY valid JSON (no markdown) with this shape:
   "slug": "kebab-case-url-slug",
   "displayName": "Short product name",
   "subtitle": "One-line config summary",
-  "amazonAsin": null or "B0XXXXXXXXX",
+  "amazonAsin": null,
   "modelSku": null or "manufacturer SKU",
-  "imageUrl": null or "https://...",
-  "amazonUrl": null or "https://www.amazon.com/dp/ASIN",
-  "amazonPriceLabel": null or "$1,299 (verify on Amazon before publish)",
+  "imageUrl": null,
+  "amazonUrl": null,
+  "amazonPriceLabel": null or "$1,299",
   "specs": {
     "cpu": { "label": "...", "geekbenchSingle": number, "geekbenchMulti": number },
     "gpu": { "label": "...", "benchmarkScore": number },
@@ -103,6 +103,6 @@ Rules:
 - Fill connectivity, ports, and input like Nanoreview comparison tables when known.
 - Use real Geekbench 6 numbers when known; otherwise conservative estimates in sourcesNote.
 - display widthMm/heightMm must match diagonalIn.
-- Never invent ASIN — leave amazonUrl null if unknown.
+- amazonPriceLabel: price ONLY like "$949.00" — no dates or notes.
 - slug must not contain "-vs-".
 """

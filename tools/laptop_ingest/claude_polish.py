@@ -10,6 +10,7 @@ from typing import Any
 from anthropic import Anthropic
 
 from registry import catalog_summary_for_claude, find_catalog_duplicate
+from amazon_helpers import extract_asin
 from product_schema import LAPTOP_JSON_SCHEMA_HINT, slugify
 
 
@@ -31,7 +32,7 @@ def polish_laptop(
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY is not set")
 
-    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7")
     client = Anthropic(api_key=api_key)
 
     user_parts = [
@@ -40,7 +41,9 @@ def polish_laptop(
         "If this model is already listed above, STOP and return JSON with slug/displayName matching the existing entry — do not invent a near-duplicate.",
     ]
     if amazon_hint:
-        user_parts.append(f"Amazon listing hint:\n{amazon_hint}")
+        user_parts.append(
+            f"Verified Amazon listing (copy amazonUrl and amazonAsin exactly):\n{amazon_hint}"
+        )
     if extra_context:
         user_parts.append(f"Additional context:\n{extra_context}")
     user_parts.append(LAPTOP_JSON_SCHEMA_HINT)
@@ -48,11 +51,12 @@ def polish_laptop(
     message = client.messages.create(
         model=model,
         max_tokens=4096,
-        temperature=0.2,
         system=(
             "You prepare electronics spec data for a comparison website. "
-            "Be conservative: mark estimates in sourcesNote, use null for unknown Amazon URLs, "
-            "and ensure display geometry is internally consistent. Output JSON only."
+            "When verified Amazon JSON is provided, copy amazonAsin, amazonUrl, amazonPriceLabel, imageUrl exactly. "
+            "amazonPriceLabel must be price only (e.g. $949.00), never dates or notes. "
+            "Fill all spec sections thoroughly (connectivity, ports, input, battery). "
+            "Mark estimates in sourcesNote. Output JSON only."
         ),
         messages=[{"role": "user", "content": "\n\n".join(user_parts)}],
     )

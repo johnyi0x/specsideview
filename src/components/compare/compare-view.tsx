@@ -7,6 +7,7 @@ import { ScreenSilhouettes } from "@/components/compare/screen-silhouettes";
 import { WeightCompare } from "@/components/compare/weight-compare";
 import { ComparePairGrid } from "@/components/compare/compare-pair-grid";
 import { SpecComparisonTable } from "@/components/compare/spec-comparison-table";
+import { ProductImage } from "@/components/product-image";
 import { parseLaptopSpecs } from "@/lib/spec-types";
 import { LocaleLink } from "@/components/locale-link";
 import { motion } from "framer-motion";
@@ -23,10 +24,9 @@ function ProductOverviewCard({ product, side }: { product: Product; side: "left"
   return (
     <div className="card-surface flex h-full min-w-0 flex-col rounded-xl p-3 sm:rounded-2xl sm:p-6 md:p-8">
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:gap-5">
-        <div className="relative mx-auto aspect-[4/3] w-full max-w-[8rem] shrink-0 overflow-hidden rounded-lg bg-[color-mix(in_oklch,var(--color-card-border)_55%,transparent)] sm:mx-0 sm:h-28 sm:w-32 sm:max-w-none sm:rounded-xl md:h-32 md:w-36">
+        <div className="relative mx-auto aspect-[4/3] w-full max-w-[8rem] shrink-0 overflow-hidden rounded-lg bg-[color-mix(in_oklch,var(--color-card-border)_55%,transparent)] sm:mx-0 sm:h-28 sm:w-28 sm:max-w-none sm:rounded-xl md:h-32 md:w-32">
           {product.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={product.imageUrl} alt="" className="h-full w-full object-cover" />
+            <ProductImage src={product.imageUrl} alt={product.displayName} />
           ) : null}
         </div>
         <div className="min-w-0 text-center sm:text-left">
@@ -162,7 +162,9 @@ export function CompareView({ payload }: { payload: ComparePayload }) {
           {category.name}
         </LocaleLink>
         <span>/</span>
-        <span className="font-mono text-[10px] text-[var(--color-accent)]">{pairPath.replace("/compare/", "")}</span>
+        <span className="font-mono text-[10px] text-[var(--color-accent)]">
+          {pairPath.split("/compare/").pop()}
+        </span>
       </div>
 
       <motion.header initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl">

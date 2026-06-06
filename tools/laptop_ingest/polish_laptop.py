@@ -39,7 +39,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.from_draft:
-        data = json.loads(args.from_draft.read_text(encoding="utf-8"))
+        data = json.loads(args.from_draft.read_text(encoding="utf-8-sig"))
     else:
         if not args.query:
             parser.error("Provide a laptop query or --from-draft")

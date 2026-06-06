@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 from db import insert_product_draft
 from product_schema import validate_draft
 from registry import update_recommendation_status
-from amazon_helpers import extract_asin
+from amazon_helpers import extract_asin, normalize_price_label
 
 ROOT = Path(__file__).resolve().parent
 
@@ -34,7 +34,10 @@ def main() -> None:
     group.add_argument("--push", action="store_true", help="Insert into Neon")
     args = parser.parse_args()
 
-    data = json.loads(args.draft.read_text(encoding="utf-8"))
+    data = json.loads(args.draft.read_text(encoding="utf-8-sig"))
+    data.pop("amazonReview", None)
+    if data.get("amazonPriceLabel"):
+        data["amazonPriceLabel"] = normalize_price_label(data["amazonPriceLabel"])
     errors = validate_draft(data)
     if errors:
         for e in errors:
