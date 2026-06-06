@@ -1,6 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { defaultLocale, isLocale } from "@/lib/i18n";
+import { comparePairPath } from "@/lib/compare-url";
+import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
+
+/** /{locale}/compare/{slugA}/{slugB} → /{locale}/compare/{slugA}-vs-{slugB} */
+function redirectLegacyTwoSegmentCompare(pathname: string, request: NextRequest): NextResponse | null {
+  const match = pathname.match(/^\/([^/]+)\/compare\/([^/]+)\/([^/]+)$/);
+  if (!match) return null;
+
+  const [, locale, slugA, slugB] = match;
+  if (!isLocale(locale)) return null;
+
+  const url = request.nextUrl.clone();
+  url.pathname = comparePairPath(slugA, slugB, locale as Locale);
+  return NextResponse.redirect(url, 308);
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,8 +30,20 @@ export function middleware(request: NextRequest) {
   }
 
   const segment = pathname.split("/")[1];
+
   if (segment && isLocale(segment)) {
+    const legacyCompare = redirectLegacyTwoSegmentCompare(pathname, request);
+    if (legacyCompare) return legacyCompare;
     return NextResponse.next();
+  }
+
+  // /compare/a/b (no locale) → /en/compare/a-vs-b in one hop
+  const bareCompare = pathname.match(/^\/compare\/([^/]+)\/([^/]+)$/);
+  if (bareCompare) {
+    const [, slugA, slugB] = bareCompare;
+    const url = request.nextUrl.clone();
+    url.pathname = comparePairPath(slugA, slugB, defaultLocale);
+    return NextResponse.redirect(url, 308);
   }
 
   const url = request.nextUrl.clone();
