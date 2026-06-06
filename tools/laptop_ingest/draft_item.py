@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script 2 — Draft: Claude for specs + Amazon fields (SerpAPI fallback only).
+Script 2 — Draft: Claude specs + SerpAPI Amazon (Claude fallback if SerpAPI fails).
 
   python draft_item.py --from-pending 1
 """
@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -25,62 +26,48 @@ ROOT = Path(__file__).resolve().parent
 DRAFTS = ROOT / "drafts"
 
 
-def _fill_amazon_gaps(
-    data: dict,
+def _fill_amazon_listing(
     *,
-    name: str,
     search_query: str,
+    name: str,
+    subtitle: str | None,
     sku: str | None,
     skip_serp: bool,
-) -> None:
-    """Fill missing Amazon fields: Claude first, SerpAPI only as fallback."""
-    missing = missing_amazon_fields(data)
-    if not missing:
-        return
+    verified_amazon_url: str | None,
+) -> dict | None:
+    if verified_amazon_url:
+        return None
 
-    print(f"  Claude Amazon lookup ({', '.join(missing)})…", file=sys.stderr)
-    listing = claude_fill_amazon_fields(
-        name,
-        subtitle=data.get("subtitle"),
-        model_sku=data.get("modelSku") or sku,
-    )
+    listing = None
+    if not skip_serp and os.environ.get("SERPAPI_API_KEY", "").strip():
+        print(f"SerpAPI Amazon search: {search_query}", file=sys.stderr)
+        listing = fetch_amazon_listing(search_query)
+        if listing:
+            print(f"  SerpAPI: {listing.get('amazonListingTitle', '')[:70]}", file=sys.stderr)
+            print(f"  ASIN {listing.get('amazonAsin')}  Price {listing.get('amazonPriceLabel')}", file=sys.stderr)
+            return listing
+        print("  SerpAPI: no match — trying Claude for Amazon fields…", file=sys.stderr)
+    elif not skip_serp:
+        print("  SerpAPI key not set — using Claude for Amazon fields…", file=sys.stderr)
+
+    listing = claude_fill_amazon_fields(name, subtitle=subtitle, model_sku=sku)
     if listing:
-        apply_listing_to_draft(data, listing, only_missing=True)
-        print(
-            f"  Claude: ASIN {listing.get('amazonAsin')}  Price {listing.get('amazonPriceLabel')}",
-            file=sys.stderr,
-        )
-
-    missing = missing_amazon_fields(data)
-    if not missing or skip_serp:
-        return
-
-    import os
-
-    if not os.environ.get("SERPAPI_API_KEY", "").strip():
-        print("  SerpAPI key not set — skipping fallback", file=sys.stderr)
-        return
-
-    print(f"  SerpAPI fallback ({', '.join(missing)})…", file=sys.stderr)
-    listing = fetch_amazon_listing(search_query)
-    if listing:
-        apply_listing_to_draft(data, listing, only_missing=True)
-        print(f"  SerpAPI: {listing.get('amazonListingTitle', '')[:70]}", file=sys.stderr)
-        print(f"  ASIN {listing.get('amazonAsin')}  Price {listing.get('amazonPriceLabel')}", file=sys.stderr)
+        print(f"  Claude: ASIN {listing.get('amazonAsin')}  Price {listing.get('amazonPriceLabel')}", file=sys.stderr)
+    return listing
 
 
 def main() -> None:
     load_dotenv(ROOT / ".env")
     load_dotenv()
 
-    parser = argparse.ArgumentParser(description="Script 2: Claude draft (SerpAPI fallback)")
+    parser = argparse.ArgumentParser(description="Script 2: Claude + SerpAPI draft")
     parser.add_argument("--name")
     parser.add_argument("--amazon", help="Verified Amazon URL override")
     parser.add_argument("--sku")
     parser.add_argument("--from-pending", type=int, metavar="N")
     parser.add_argument("--notes")
     parser.add_argument("--out", type=Path)
-    parser.add_argument("--skip-serp", action="store_true", help="Never call SerpAPI fallback")
+    parser.add_argument("--skip-serp", action="store_true")
     args = parser.parse_args()
 
     name = args.name
@@ -100,13 +87,27 @@ def main() -> None:
         parser.error("Provide --from-pending N, --name, and/or --amazon")
 
     search_query = f"{name} {sku or ''}".strip()
-    print(f"Calling Claude for full draft: {name}", file=sys.stderr)
+    print(f"Calling Claude for specs: {name}", file=sys.stderr)
+
+    listing = _fill_amazon_listing(
+        search_query=search_query,
+        name=name or search_query,
+        subtitle=None,
+        sku=sku,
+        skip_serp=args.skip_serp,
+        verified_amazon_url=verified_amazon_url,
+    )
 
     extra = args.notes or ""
     if sku:
         extra = (extra + f"\nManufacturer SKU: {sku}").strip()
 
-    amazon_hint = apply_associate_tag(verified_amazon_url) if verified_amazon_url else None
+    amazon_hint = None
+    if verified_amazon_url:
+        amazon_hint = apply_associate_tag(verified_amazon_url)
+    elif listing:
+        amazon_hint = listing.get("amazonUrl")
+        extra = (extra + f"\nAmazon listing for reference:\n{json.dumps(listing, indent=2)}").strip()
 
     if associate_tag():
         print(f"Affiliate tag: {associate_tag()}", file=sys.stderr)
@@ -116,17 +117,23 @@ def main() -> None:
     if sku:
         data["modelSku"] = sku
 
-    if verified_amazon_url:
+    if listing:
+        apply_listing_to_draft(data, listing)
+    elif verified_amazon_url:
         apply_verified_amazon_link(data, amazon_url=verified_amazon_url)
         data.pop("amazonReview", None)
-    else:
-        _fill_amazon_gaps(
-            data,
-            name=data.get("displayName") or name or search_query,
-            search_query=search_query,
-            sku=data.get("modelSku") or sku,
-            skip_serp=args.skip_serp,
+    elif not verified_amazon_url:
+        retry = claude_fill_amazon_fields(
+            data.get("displayName") or name or search_query,
+            subtitle=data.get("subtitle"),
+            model_sku=data.get("modelSku") or sku,
         )
+        if retry:
+            print(
+                f"  Claude (with subtitle): ASIN {retry.get('amazonAsin')}  Price {retry.get('amazonPriceLabel')}",
+                file=sys.stderr,
+            )
+            apply_listing_to_draft(data, retry)
 
     if data.get("amazonPriceLabel"):
         data["amazonPriceLabel"] = normalize_price_label(data["amazonPriceLabel"])
@@ -145,7 +152,6 @@ def main() -> None:
 
     missing = missing_amazon_fields(data)
     print(f"\nWrote draft: {out}")
-    print(f"  displayName:      {data.get('displayName')}")
     print(f"  amazonAsin:       {data.get('amazonAsin')}")
     print(f"  amazonUrl:        {data.get('amazonUrl')}")
     print(f"  amazonPriceLabel: {data.get('amazonPriceLabel')}")

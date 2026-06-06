@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-06T09:46:41.672292+00:00",
+  "updatedAt": "2026-06-06T09:54:51.021595+00:00",
   "products": [
     {
       "slug": "acer-swift-14-ai-2024",
@@ -168,6 +168,14 @@
       "category": "laptops",
       "amazonAsin": "B0DX2CYF5Y",
       "modelSku": "RZ09-0483AEH3-R3U1"
+    },
+    {
+      "slug": "razer-blade-18-2024",
+      "displayName": "Razer Blade 18 (2024)",
+      "subtitle": "Core i9-14900HX, RTX 4090, 32GB RAM, 2TB SSD, 18\" QHD+ 300Hz",
+      "category": "laptops",
+      "amazonAsin": "B0CYC396XX",
+      "modelSku": "RZ09-0484UEH4-R3U1"
     }
   ]
 }

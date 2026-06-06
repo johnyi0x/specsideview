@@ -181,10 +181,11 @@ def apply_listing_to_draft(
             data[key] = val
     data.pop("amazonReview", None)
     source = listing.get("amazonSource", "serpapi")
-    if source == "claude":
-        note = "Amazon listing fields from Claude."
-    else:
-        note = "Amazon listing fields from SerpAPI fallback — verify ASIN, price, and image on Amazon."
+    note = (
+        "Amazon data from SerpAPI."
+        if source == "serpapi"
+        else "Amazon data from Claude fallback (SerpAPI had no match) — verify ASIN/price on Amazon."
+    )
     existing = data.get("sourcesNote") or ""
     if note not in existing:
         data["sourcesNote"] = (existing + " " + note).strip()

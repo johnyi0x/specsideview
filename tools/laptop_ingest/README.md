@@ -82,10 +82,10 @@ python recommend_items.py --from-watchlist
 
 ### Script 2 — Draft (`draft_item.py`)
 
-- **Claude (Opus)** → full specs, name, Amazon ASIN/URL/price/image  
-- **SerpAPI** → fallback only when Claude leaves Amazon fields empty  
+- **Claude (Opus)** → full specs  
+- **SerpAPI** → real Amazon ASIN, affiliate URL, price, image (Claude fallback if SerpAPI fails)
 
-`SERPAPI_API_KEY` is optional (fallback). `ANTHROPIC_API_KEY` is required.
+Requires `SERPAPI_API_KEY` in Windows env (same key as `tools/serp_research`).
 
 ```powershell
 pip install google-search-results

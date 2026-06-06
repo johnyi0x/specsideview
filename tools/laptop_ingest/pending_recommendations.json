@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-06-06T09:41:47.506195+00:00",
+  "generatedAt": "2026-06-06T09:52:36.799198+00:00",
   "items": [
     {
-      "displayName": "HP OmniBook Ultra 14 (2024)",
+      "displayName": "Razer Blade 18 (2024)",
       "amazonAsin": null,
-      "modelSku": "14-fd0097nr",
-      "notes": "AMD Ryzen AI 9 HX 375 Copilot+ PC with strong battery life, popular premium thin-and-light alternative to MacBook Air"
+      "modelSku": "RZ09-0484UEH4-R3U1",
+      "notes": "Flagship 18-inch gaming laptop with Intel Core i9-14900HX and RTX 4090, 240Hz QHD+ display"
     },
     {
-      "displayName": "Lenovo Legion 5i Gen 10 (2025)",
+      "displayName": "ASUS ROG Strix Scar 18 (2024)",
       "amazonAsin": null,
-      "modelSku": "83LR0001US",
-      "notes": "Mainstream gaming laptop with Intel Core i7-14650HX and RTX 5070, popular mid-range gaming pick for 2025"
+      "modelSku": "G834JYR-XS97",
+      "notes": "High-end gaming laptop with Core i9-14900HX, RTX 4090, and Mini LED 240Hz display"
     },
     {
-      "displayName": "ASUS ProArt P16 (2024)",
+      "displayName": "LG Gram Pro 17 (2024)",
       "amazonAsin": null,
-      "modelSku": "H7606WI-XS99",
-      "notes": "Creator-focused 16-inch laptop with Ryzen AI 9 HX 370, RTX 4070, and 4K OLED touch display"
+      "modelSku": "17Z90SP-K.ADB9U1",
+      "notes": "Ultra-lightweight 17-inch laptop with Intel Core Ultra 7 and OLED-like display, popular for productivity"
     }
   ]
 }

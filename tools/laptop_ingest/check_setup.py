@@ -21,10 +21,6 @@ def fail(msg: str) -> None:
     print(f"  FAIL  {msg}")
 
 
-def warn(msg: str) -> None:
-    print(f"  WARN  {msg}")
-
-
 def main() -> None:
     print("SpecSideView ingest — setup check\n")
 
@@ -42,9 +38,9 @@ def main() -> None:
 
     serp = os.environ.get("SERPAPI_API_KEY", "").strip()
     if serp:
-        ok(f"SERPAPI_API_KEY set ({serp[:8]}…) — SerpAPI fallback in draft_item.py")
+        ok(f"SERPAPI_API_KEY set ({serp[:8]}…) — Amazon fields auto-fill in draft_item.py")
     else:
-        warn("SERPAPI_API_KEY not set — draft_item.py uses Claude only for Amazon fields")
+        fail("SERPAPI_API_KEY missing — needed for auto Amazon ASIN/price/image in Script 2")
 
     model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7")
     ok(f"ANTHROPIC_MODEL = {model} (default claude-opus-4-7 if unset)")
