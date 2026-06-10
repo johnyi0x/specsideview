@@ -46,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-adsense-account" content="ca-pub-3833961791559830" />
         <AdSenseScript />
       </head>
       <body className={`${syne.variable} ${dmSans.variable} flex min-h-screen flex-col antialiased`}>
