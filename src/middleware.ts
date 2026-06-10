@@ -55,6 +55,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/api") ||
     pathname === "/sitemap.xml" ||
     pathname === "/robots.txt" ||
+    pathname === "/ads.txt" ||
     /\.(ico|svg|png|jpg|jpeg|webp|woff2?)$/i.test(pathname)
   ) {
     return NextResponse.next();
