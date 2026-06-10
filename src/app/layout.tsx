@@ -45,8 +45,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${syne.variable} ${dmSans.variable} flex min-h-screen flex-col antialiased`}>
+      <head>
         <AdSenseScript />
+      </head>
+      <body className={`${syne.variable} ${dmSans.variable} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider>
           <SiteHeader />
           <main className="relative flex-1">{children}</main>
