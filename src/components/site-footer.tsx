@@ -41,6 +41,14 @@ export function SiteFooter() {
           <LocaleLink href="/about" className="text-[var(--color-accent)] hover:underline">
             About
           </LocaleLink>
+          {" · "}
+          <LocaleLink href="/contact" className="text-[var(--color-accent)] hover:underline">
+            Contact
+          </LocaleLink>
+          {" · "}
+          <LocaleLink href="/privacy" className="text-[var(--color-accent)] hover:underline">
+            Privacy
+          </LocaleLink>
         </p>
       </div>
     </footer>

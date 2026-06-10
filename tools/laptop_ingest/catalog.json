@@ -1,6 +1,14 @@
 {
-  "updatedAt": "2026-06-06T14:08:20.655915+00:00",
+  "updatedAt": "2026-06-06T16:54:23.673282+00:00",
   "products": [
+    {
+      "slug": "acer-aspire-go-15-2024",
+      "displayName": "Acer Aspire Go 15 (2024)",
+      "subtitle": "Intel Core i3-N305, 8GB LPDDR5, 128GB eMMC, 15.6\" FHD IPS",
+      "category": "laptops",
+      "amazonAsin": "B0CV5ZSR17",
+      "modelSku": "AG15-31P-30Q1"
+    },
     {
       "slug": "acer-nitro-v-16-2024",
       "displayName": "Acer Nitro V 16 (2024)",
@@ -56,6 +64,14 @@
       "category": "laptops",
       "amazonAsin": "B0DKPD8M7S",
       "modelSku": "SFX14-72G-79DV"
+    },
+    {
+      "slug": "apple-macbook-air-13-m2-2022",
+      "displayName": "MacBook Air 13 M2 (2022)",
+      "subtitle": "Apple M2, 8GB RAM, 256GB SSD, 13.6\" Liquid Retina",
+      "category": "laptops",
+      "amazonAsin": "B0BHC15G32",
+      "modelSku": "MLY33LL/A"
     },
     {
       "slug": "apple-macbook-air-13-m3-2024",
@@ -114,6 +130,14 @@
       "modelSku": null
     },
     {
+      "slug": "apple-macbook-pro-16-m3-max-2023",
+      "displayName": "MacBook Pro 16 M3 Max (2023)",
+      "subtitle": "Apple M3 Max (16-core CPU/40-core GPU), 36GB RAM, 1TB SSD",
+      "category": "laptops",
+      "amazonAsin": "B0CWW26KVG",
+      "modelSku": "MRW73LL/A"
+    },
+    {
       "slug": "apple-macbook-pro-16-m4-max-2024",
       "displayName": "MacBook Pro 16\" (M4 Max, 2024)",
       "subtitle": "M4 Max 14-core CPU, 48GB RAM, 1TB SSD, 16.2\" Liquid Retina XDR",
@@ -170,6 +194,14 @@
       "modelSku": null
     },
     {
+      "slug": "asus-tuf-gaming-a16-2024",
+      "displayName": "ASUS TUF Gaming A16 (2024)",
+      "subtitle": "Ryzen 9 7940HX, RTX 4060, 16GB DDR5, 1TB SSD, 16\" 2.5K 165Hz",
+      "category": "laptops",
+      "amazonAsin": "B0DNQ7K9FC",
+      "modelSku": "FA607PV-EH94"
+    },
+    {
       "slug": "asus-vivobook-s-15-oled-2024-snapdragon-x",
       "displayName": "ASUS Vivobook S 15 OLED (2024, Snapdragon X)",
       "subtitle": "15.6\" 3K 120Hz OLED, Snapdragon X Elite, 16GB/1TB",
@@ -200,6 +232,14 @@
       "category": "laptops",
       "amazonAsin": "B0FDZ3XGXK",
       "modelSku": "AWM18R2-9678BLK-PUS"
+    },
+    {
+      "slug": "dell-g16-7630-2024",
+      "displayName": "Dell G16 7630 (2024)",
+      "subtitle": "16\" QHD+ 240Hz, Intel i9-13900HX, RTX 4070, 64GB DDR5, 2TB SSD",
+      "category": "laptops",
+      "amazonAsin": "B0F7GYP1MN",
+      "modelSku": "G7630-9437BLK-PUS"
     },
     {
       "slug": "dell-inspiron-14-plus-7441-2024",
@@ -271,6 +311,14 @@
       "subtitle": "Core Ultra 7 155H, RTX 4060, 16 GB RAM, 14\" 2.8K OLED 120 Hz",
       "category": "laptops",
       "amazonAsin": "B0GCQ1WWWW",
+      "modelSku": null
+    },
+    {
+      "slug": "hp-omnibook-5-flip-14-2025",
+      "displayName": "HP OmniBook 5 Flip 14 (2025)",
+      "subtitle": "Intel Core 5 120U, 8GB LPDDR5, 512GB SSD, 14\" FHD+ Touch",
+      "category": "laptops",
+      "amazonAsin": "B0FJFJ837Q",
       "modelSku": null
     },
     {
@@ -354,6 +402,14 @@
       "modelSku": null
     },
     {
+      "slug": "lenovo-legion-slim-5-gen-9-2024",
+      "displayName": "Lenovo Legion Slim 5 Gen 9 (2024)",
+      "subtitle": "Ryzen 7 260, RTX 5060, 16GB, 1TB, 15.1\" OLED 165Hz",
+      "category": "laptops",
+      "amazonAsin": "B0FPST2CRB",
+      "modelSku": "83DH000BUS"
+    },
+    {
       "slug": "lenovo-thinkbook-16p-gen-6-2025",
       "displayName": "Lenovo ThinkBook 16p Gen 6 (2025)",
       "subtitle": "16\" 3.2K IPS, Intel Core Ultra 9 H-series, RTX 5070, 32GB DDR5, 1TB SSD",
@@ -416,6 +472,14 @@
       "category": "laptops",
       "amazonAsin": "B0FNXZGXRM",
       "modelSku": null
+    },
+    {
+      "slug": "lg-gram-pro-16-2in1-2024",
+      "displayName": "LG Gram Pro 16 2-in-1 (2024)",
+      "subtitle": "Core Ultra 7 255H, 32GB RAM, 2TB SSD, 16\" OLED touch",
+      "category": "laptops",
+      "amazonAsin": "B0F1YZMK2D",
+      "modelSku": "16T90SP-K.ADB9U1"
     },
     {
       "slug": "lg-gram-pro-17-2024",
@@ -498,6 +562,14 @@
       "modelSku": null
     },
     {
+      "slug": "samsung-galaxy-book4-15-2024",
+      "displayName": "Samsung Galaxy Book4 (15, 2024)",
+      "subtitle": "15.6\" FHD, Intel Core 7 150U, 16 GB RAM, 512 GB SSD",
+      "category": "laptops",
+      "amazonAsin": "B0CQ3VXJ3J",
+      "modelSku": "NP750XGJ-KG1US"
+    },
+    {
       "slug": "samsung-galaxy-book4-edge-16",
       "displayName": "Samsung Galaxy Book4 Edge 16",
       "subtitle": "Snapdragon X Elite, 16\" 2880x1800 AMOLED, 16GB RAM, 1TB SSD",
@@ -520,6 +592,14 @@
       "category": "laptops",
       "amazonAsin": "B0CQ3VXJ3J",
       "modelSku": "NP960XGL-XG1US"
+    },
+    {
+      "slug": "samsung-galaxy-book5-360-15-2025",
+      "displayName": "Samsung Galaxy Book5 360 (15, 2025)",
+      "subtitle": "Intel Core 5 210H, 16GB / 512GB, 15.6\" FHD AMOLED touchscreen 2-in-1",
+      "category": "laptops",
+      "amazonAsin": "B0DSLNMY6M",
+      "modelSku": "NP750QHA"
     },
     {
       "slug": "samsung-galaxy-book5-360-2025",

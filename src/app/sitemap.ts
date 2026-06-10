@@ -8,7 +8,7 @@ export default async function sitemap() {
   const base = siteUrl();
   const locale = defaultLocale;
 
-  const staticRoutes = ["", "/about", "/compare"].map((path) => ({
+  const staticRoutes = ["", "/about", "/contact", "/privacy", "/compare"].map((path) => ({
     url: `${base}${localizedPath(path, locale)}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

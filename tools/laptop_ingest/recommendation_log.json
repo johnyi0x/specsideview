@@ -638,6 +638,96 @@
       "status": "pushed",
       "recommendedAt": "2026-06-06T13:15:24.156167+00:00",
       "notes": "Compact premium gaming laptop with Ryzen 9 and RTX 4070, frequently compared to Zephyrus G14"
+    },
+    {
+      "displayName": "MacBook Pro 16 M3 Max (2023)",
+      "slugGuess": "macbook-pro-16-m3-max-2023",
+      "amazonAsin": null,
+      "modelSku": "MRW73LL/A",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.300107+00:00",
+      "notes": "Previous-gen flagship 16-inch MacBook Pro with M3 Max, still widely sold and a common comparison point against M4 models"
+    },
+    {
+      "displayName": "MacBook Air 13 M2 (2022)",
+      "slugGuess": "macbook-air-13-m2-2022",
+      "amazonAsin": null,
+      "modelSku": "MLY33LL/A",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "Still actively sold by Apple as the budget MacBook Air option; key entry-level comparison point"
+    },
+    {
+      "displayName": "Samsung Galaxy Book5 360 (15, 2025)",
+      "slugGuess": "samsung-galaxy-book5-360-15-2025",
+      "amazonAsin": null,
+      "modelSku": "NP750QHA",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "2025 mainstream 15-inch convertible with Intel Core Ultra Series 2, popular Samsung consumer laptop"
+    },
+    {
+      "displayName": "Samsung Galaxy Book4 (15, 2024)",
+      "slugGuess": "samsung-galaxy-book4-15-2024",
+      "amazonAsin": null,
+      "modelSku": "NP750XGJ-KG1US",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "Mainstream 15-inch Samsung laptop with Core 7 150U, popular budget pick"
+    },
+    {
+      "displayName": "Lenovo Legion Slim 5 Gen 9 (2024)",
+      "slugGuess": "lenovo-legion-slim-5-gen-9-2024",
+      "amazonAsin": null,
+      "modelSku": "83DH000BUS",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "Popular mid-range 16-inch gaming laptop with Ryzen 7 8845HS and RTX 4060"
+    },
+    {
+      "displayName": "ASUS TUF Gaming A16 (2024)",
+      "slugGuess": "asus-tuf-gaming-a16-2024",
+      "amazonAsin": null,
+      "modelSku": "FA607PV-EH94",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "Budget-friendly 16-inch gaming laptop with Ryzen 9 and RTX 4060, frequent comparison target"
+    },
+    {
+      "displayName": "Dell G16 7630 (2024)",
+      "slugGuess": "dell-g16-7630-2024",
+      "amazonAsin": null,
+      "modelSku": "G7630-9437BLK-PUS",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "Dell's mainstream 16-inch gaming laptop with Intel Core i9 and RTX 4070"
+    },
+    {
+      "displayName": "HP OmniBook X Flip 14 (2025)",
+      "slugGuess": "hp-omnibook-x-flip-14-2025",
+      "amazonAsin": null,
+      "modelSku": null,
+      "status": "recommended",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "2025 convertible refresh of HP's AI PC line with Core Ultra Series 2, important new release"
+    },
+    {
+      "displayName": "Acer Aspire Go 15 (2024)",
+      "slugGuess": "acer-aspire-go-15-2024",
+      "amazonAsin": null,
+      "modelSku": "AG15-31P-30Q1",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "Popular budget 15-inch laptop, important low-end comparison anchor"
+    },
+    {
+      "displayName": "LG Gram Pro 16 2-in-1 (2024)",
+      "slugGuess": "lg-gram-pro-16-2-in-1-2024",
+      "amazonAsin": null,
+      "modelSku": "16T90SP-K.ADB9U1",
+      "status": "pushed",
+      "recommendedAt": "2026-06-06T16:37:33.301138+00:00",
+      "notes": "Ultra-light 16-inch convertible with Core Ultra 7, popular premium thin-and-light"
     }
   ]
 }
